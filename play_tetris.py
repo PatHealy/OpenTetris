@@ -1,6 +1,6 @@
 import sys
 from sty import fg, bg, ef, rs, RgbFg
-from tetris import Tetris
+from entities import Tetris
 
 class _Getch:
 	"""Gets a single character from standard input.  Does not echo to the

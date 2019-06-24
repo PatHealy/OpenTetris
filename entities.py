@@ -99,6 +99,7 @@ class Board:
 		self.width = width
 		self.height = height
 		self.data = [[(0,0,0) for x in range(width)] for y in range(height + 3)]
+		self.score = 0
 
 	def get_data(self):
 		data_copy = [[(self.data[y][x][0], self.data[y][x][1], self.data[y][x][2]) for x in range(self.width)] for y in range(self.height + 3)]
@@ -118,13 +119,16 @@ class Board:
 		return False
 
 	def check_for_line_clear(self):
+		lines_cleared = 0
 		for i in range(len(self.data)):
 			clear = True
 			for cell in self.data[i]:
 				if (cell == (0,0,0) or cell == (255,255,255)):
 					clear = False
 			if clear:
+				lines_cleared = lines_cleared + 1
 				self.data[i] = [(255,255,255) for x in range(10)]
+		self.score = self.score + lines_cleared**2
 
 	def remove_cleared_lines(self):
 		for i in range(len(self.data)):
@@ -147,6 +151,9 @@ class Board:
 
 		self.check_for_line_clear()
 		return True
+
+	def get_score(self):
+		return 0 + self.score
 
 class Tetris:
 	def __init__(self, width, height):
@@ -220,3 +227,6 @@ class Tetris:
 			self.data[c[1]][c[0]] = color
 
 		return self.data
+
+	def get_score(self):
+		return self.board.get_score()
