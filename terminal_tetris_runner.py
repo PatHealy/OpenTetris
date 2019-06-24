@@ -39,10 +39,12 @@ class _GetchWindows:
 class TerminalTetrisRunner:
 
 	def __init__(self):
-		self.game = Tetris()
+		self.width = 10
+		self.height = 20
+		self.game = Tetris(self.width, self.height)
 
 	def new_game(self):
-		self.game = Tetris()
+		self.game = Tetris(self.width, self.height)
 		self.erase_board()
 
 	def delete_last_lines(self,n):
@@ -53,7 +55,7 @@ class TerminalTetrisRunner:
 			sys.stdout.write(ERASE_LINE)
 
 	def erase_board(self):
-		self.delete_last_lines(23)
+		self.delete_last_lines(self.height + 3)
 
 	def print_board(self):
 		data = self.game.get_board()
@@ -83,6 +85,7 @@ class TerminalTetrisRunner:
 		return success
 
 	def play(self):
+		print("WASD to move, R to rotate, X to quit")
 		while True:
 			while not self.game.is_failed():
 				self.print_board()

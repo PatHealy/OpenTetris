@@ -3,7 +3,7 @@ import random
 import operator
 
 class Piece:
-	def __init__(self):
+	def __init__(self, width, height):
 		self.types = {
 			'I': ((0,-1), (0,1), (0,2)), # vertical line
 			'_': ((-1,0), (1,0), (2,0)), # horizontal line
@@ -65,7 +65,7 @@ class Piece:
 		shape_index = random.randint(0, len(starters)-1)
 		self.shape = starters[shape_index]
 		self.color = colors[shape_index]
-		self.center = (4, 21)
+		self.center = (width//2, height + 1)
 
 	def rotate(self):
 		self.shape = self.edges[self.shape]
@@ -95,11 +95,13 @@ class Piece:
 		return coordinates
 
 class Board:
-	def __init__(self):
-		self.data = [[(0,0,0) for x in range(10)] for y in range(23)]
+	def __init__(self, width, height):
+		self.width = width
+		self.height = height
+		self.data = [[(0,0,0) for x in range(width)] for y in range(height + 3)]
 
 	def get_data(self):
-		data_copy = [[(self.data[y][x][0], self.data[y][x][1], self.data[y][x][2]) for x in range(10)] for y in range(23)]
+		data_copy = [[(self.data[y][x][0], self.data[y][x][1], self.data[y][x][2]) for x in range(self.width)] for y in range(self.height + 3)]
 		return data_copy
 
 	def fail_board(self):
@@ -110,10 +112,7 @@ class Board:
 		return True
 
 	def is_failed(self):
-		for cell in self.data[20]:
-			if not cell == (0,0,0):
-				return self.fail_board()
-		for cell in self.data[21]:
+		for cell in self.data[self.height]:
 			if not cell == (0,0,0):
 				return self.fail_board()
 		return False
@@ -150,15 +149,17 @@ class Board:
 		return True
 
 class Tetris:
-	def __init__(self):
-		self.board = Board()
-		self.piece = Piece()
+	def __init__(self, width, height):
+		self.width = width
+		self.height = height
+		self.board = Board(width, height)
+		self.piece = Piece(width, height)
 
 	def is_overlap(self):
 		board_data = self.board.get_data()
 		try:
 			for c in self.piece.get_coordinates():
-				if c[0] >= 10 or c[0] < 0 or c[1] < 0 or c[1] >= 24:
+				if c[0] >= self.width or c[0] < 0 or c[1] < 0 or c[1] >= self.height + 4:
 					return True
 				if not board_data[c[1]][c[0]] == (0,0,0):
 					return True
@@ -204,7 +205,7 @@ class Tetris:
 			pass
 		self.board.add_piece(self.piece)
 
-		self.piece = Piece()
+		self.piece = Piece(self.width, self.height)
 		return True
 
 	def is_failed(self):
