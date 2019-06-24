@@ -1,0 +1,221 @@
+# Objects related to the game of tetris
+import random
+import operator
+
+class Piece:
+	def __init__(self):
+		self.types = {
+			'I': ((0,-1), (0,1), (0,2)), # vertical line
+			'_': ((-1,0), (1,0), (2,0)), # horizontal line
+
+			'O': ((0,1), (1,0), (1,1)), # square
+
+			'uT': ((0,1), (1,0), (-1,0)), # upside-down T
+			'-|': ((-1,0), (0,-1), (0,1)), # T on its right side
+			'T': ((0,-1), (1,0), (-1,0)), # T
+			'|-': ((1,0), (0,1), (0,-1)), # T on its left side
+
+			'S': ((-1,0), (0,1), (1,1)), # S
+			'h': ((0,1), (1,0), (1,-1)), # S on its side\
+
+			'Z': ((1,0), (0,1), (-1,1)), # Z
+			'nl': ((-1,0), (-1,-1), (0,1)), # Z on its side
+
+			':__': ((1,0), (-1,0), (-1,1)), # J on its right side
+			'r': ((0,1), (1,1), (0,-1)), # Upside down J
+			'--,': ((1,0), (1,-1), (-1,0)), #J on its left side
+			'J': ((0,1), (0,-1), (-1,-1)), # J
+
+			'__:': ((-1,0), (1,0), (1,1)), # L on its left side
+			'`|': ((0,1), (0,-1), (-1,1)), # L upside down
+			',--': ((1,0), (-1,0), (-1,-1)), # L on its right side
+			'L': ((0,-1), (1,-1), (0,1)) # L
+		}
+		self.edges = {
+			'I': '_',
+			'_': 'I',
+
+			'O': 'O',
+
+			'uT': '-|',
+			'-|': 'T',
+			'T': '|-',
+			'|-': 'uT',
+
+			'S': 'h',
+			'h':'S',
+
+			'Z': 'nl',
+			'nl': 'Z',
+
+			':__': 'J',
+			'r': ':__',
+			'--,': 'r',
+			'J': '--,',
+
+			'__:': '`|',
+			'`|': ',--',
+			',--': 'L',
+			'L': '__:'
+		}
+
+		starters = ['_', 'O', 'uT', 'S', 'Z', ':__', '__:']
+		colors = [(0, 240, 240), (240, 240, 0), (160, 0, 240), (0, 240, 0), (240, 0, 0), (0, 0, 240), (240, 160, 0)]
+
+		shape_index = random.randint(0, len(starters)-1)
+		self.shape = starters[shape_index]
+		self.color = colors[shape_index]
+		self.center = (4, 21)
+
+	def rotate(self):
+		self.shape = self.edges[self.shape]
+
+	def move(self,direction):
+		if direction == 'down':
+			self.center = tuple(map(operator.add, self.center, (0,-1)))
+		elif direction == 'up':
+			self.center = tuple(map(operator.add, self.center, (0,1)))
+		elif direction == 'left':
+			self.center = tuple(map(operator.add, self.center, (-1,0)))
+		elif direction == 'right':
+			self.center = tuple(map(operator.add, self.center, (1,0)))
+
+		return self.get_coordinates()
+
+	def get_color(self):
+		return self.color
+
+	def get_coordinates(self):
+		coordinates = []
+		coordinates.append((self.center[0], self.center[1]))
+
+		for c in self.types[self.shape]:
+			coordinates.append(tuple(map(operator.add, self.center, c)))
+
+		return coordinates
+
+class Board:
+	def __init__(self):
+		self.data = [[(0,0,0) for x in range(10)] for y in range(23)]
+
+	def get_data(self):
+		data_copy = [[(self.data[y][x][0], self.data[y][x][1], self.data[y][x][2]) for x in range(10)] for y in range(23)]
+		return data_copy
+
+	def fail_board(self):
+		for i in range(len(self.data)):
+			for j in range(len(self.data[i])):
+				if self.data[i][j] == (0,0,0):
+					self.data[i][j] = (50,0,0)
+		return True
+
+	def is_failed(self):
+		for cell in self.data[20]:
+			if not cell == (0,0,0):
+				return self.fail_board()
+		for cell in self.data[21]:
+			if not cell == (0,0,0):
+				return self.fail_board()
+		return False
+
+	def check_for_line_clear(self):
+		for i in range(len(self.data)):
+			clear = True
+			for cell in self.data[i]:
+				if (cell == (0,0,0) or cell == (255,255,255)):
+					clear = False
+			if clear:
+				self.data[i] = [(255,255,255) for x in range(10)]
+
+	def remove_cleared_lines(self):
+		for i in range(len(self.data)):
+			if self.data[i][0] == (255,255,255):
+				j = i
+				while j < len(self.data) - 1:
+					self.data[j] = self.data[j + 1]
+					j = j + 1
+
+	def add_piece(self,piece):
+		coordinates = piece.get_coordinates()
+		color = piece.get_color()
+
+		for c in coordinates:
+			if not self.data[c[1]][c[0]] == (0,0,0):
+				return False
+
+		for c in coordinates:
+			self.data[c[1]][c[0]] = color
+
+		self.check_for_line_clear()
+		return True
+
+class Tetris:
+	def __init__(self):
+		self.board = Board()
+		self.piece = Piece()
+
+	def is_overlap(self):
+		board_data = self.board.get_data()
+		try:
+			for c in self.piece.get_coordinates():
+				if c[0] >= 10 or c[0] < 0 or c[1] < 0 or c[1] >= 24:
+					return True
+				if not board_data[c[1]][c[0]] == (0,0,0):
+					return True
+		except IndexError:
+			return True
+		return False
+
+	def move_piece(self, direction):
+		if self.is_failed():
+			return False
+		self.board.remove_cleared_lines()
+
+		opposites = {'up': 'down', 'down': 'up', 'left': 'right', 'right': 'left'}
+		self.piece.move(direction)
+
+		if self.is_overlap():
+			self.piece.move(opposites[direction])
+			return False
+
+		return True
+
+	def rotate_piece(self):
+		if self.is_failed():
+			return False
+		self.board.remove_cleared_lines()
+
+		self.piece.rotate()
+
+		if self.is_overlap():
+			self.piece.rotate()
+			self.piece.rotate()
+			self.piece.rotate()
+			return False
+
+		return True
+
+	def snap_piece(self):
+		if self.is_failed():
+			return False
+		self.board.remove_cleared_lines()
+
+		while self.move_piece('down'):
+			pass
+		self.board.add_piece(self.piece)
+
+		self.piece = Piece()
+		return True
+
+	def is_failed(self):
+		return self.board.is_failed()
+
+	def get_board(self):
+		self.data = self.board.get_data()
+
+		color = self.piece.get_color()
+
+		for c in self.piece.get_coordinates():
+			self.data[c[1]][c[0]] = color
+
+		return self.data
