@@ -107,7 +107,7 @@ class TetrisTrainer:
 		return model
 
 	def train_batch(self, minibatch):
-		inputs = np.zeros((self.BATCH, s_t.shape[1], s_t.shape[2], s_t.shape[3]))
+		inputs = np.zeros((self.BATCH, self.width, self.height+3, 1))
 		targets = np.zeros((inputs.shape[0], self.ACTIONS))
 		loss = 0
 
@@ -118,14 +118,14 @@ class TetrisTrainer:
 			state_t1 = minibatch[i][3]
 			terminal = minibatch[i][4]
 			inputs[i:i + 1] = state_t
-			targets[i] = model.predict(state_t)
-			Q_sa = model.predict(state_t1)
+			targets[i] = self.model.predict(state_t)
+			Q_sa = self.model.predict(state_t1)
 			if terminal:
 				targets[i, action_t] = reward_t
 			else:
 				targets[i, action_t] = reward_t + self.GAMMA * np.max(Q_sa)
 
-				loss += model.train_on_batch(inputs, targets)
+				loss += self.model.train_on_batch(inputs, targets)
 
 	def train_network(self, model, game_state):
 		D = deque()
@@ -169,7 +169,7 @@ class TetrisTrainer:
 				D.popleft() 
 
 			if t > OBSERVE:
-				train_batch(random.sample(D, self.BATCH)) 
+				self.train_batch(random.sample(D, self.BATCH))
 			s_t = s_t1 
 			t = t + 1
 			print("TIMESTEP", t, "/ EPSILON", epsilon, "/ ACTION", action_index, "/ REWARD", r_t,"/ Q_MAX " , np.max(Q_sa), "/ Loss ", loss)
@@ -179,8 +179,8 @@ class TetrisTrainer:
 			game = AITerminalDriver(width=width, height=height)
 		player = TetrisAgent(game)
 		game_state = GameState(player,game)
-		model = self.build_model()
-		self.train_network(model,game_state)
+		self.model = self.build_model()
+		self.train_network(self.model,game_state)
 
 if __name__ == '__main__':
 	t = TetrisTrainer()

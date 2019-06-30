@@ -101,6 +101,31 @@ class Board:
 		self.data = [[(0,0,0) for x in range(width)] for y in range(height + 3)]
 		self.score = 0
 
+	def get_density_score(self):
+		density_score = 0
+		max_span = 0
+		for i in range(len(self.data)):
+			span = 0
+			for cell in self.data[i]:
+				if not cell == (0,0,0):
+					span = span + 1
+			density_score = density_score + ((i) * span)
+			if span > max_span:
+				max_span = span
+		density_score = density_score + max_span / len(self.data)
+		return density_score
+
+	def get_max_span(self):
+		max_span = 0
+		for row in self.data:
+			span = 0
+			for cell in row:
+				if not cell == (0,0,0):
+					span = span + 1
+			if span > max_span:
+				max_span = span 
+		return max_span
+
 	def get_data(self):
 		data_copy = [[(self.data[y][x][0], self.data[y][x][1], self.data[y][x][2]) for x in range(self.width)] for y in range(self.height + 3)]
 		return data_copy
@@ -128,7 +153,7 @@ class Board:
 			if clear:
 				lines_cleared = lines_cleared + 1
 				self.data[i] = [(255,255,255) for x in range(10)]
-		self.score = self.score + lines_cleared**2
+		self.score = self.score + 100*lines_cleared**2
 
 	def remove_cleared_lines(self):
 		for i in range(len(self.data)):
@@ -150,6 +175,8 @@ class Board:
 			self.data[c[1]][c[0]] = color
 
 		self.check_for_line_clear()
+
+		self.score = self.score + self.get_density_score()
 		return True
 
 	def get_score(self):

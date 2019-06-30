@@ -11,6 +11,7 @@ class AITerminalDriver:
 		self.height = height
 		self.game = Tetris(self.width, self.height)
 		self.print_board()
+		self.clear_ticker = 0
 		for n in range(self.height + 3):
 			print()
 
@@ -34,8 +35,12 @@ class AITerminalDriver:
 			sys.stdout.write(ERASE_LINE)
 
 	def erase_board(self):
-		os.system('clear')
-		#self.slide_up_lines(self.height + 3)
+		if self.clear_ticker > 500:
+			self.clear_ticker = 0
+			os.system('clear')
+		else:
+			self.slide_up_lines(self.height + 4)
+		self.clear_ticker = self.clear_ticker + 1
 		#self.delete_last_lines(50)
 
 	def print_board(self):
