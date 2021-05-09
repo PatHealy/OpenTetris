@@ -37,7 +37,7 @@ class _GetchWindows:
 
 
 class GridTetrisRunner(SampleBase):
-	def __init__(self):
+	def __init__(self, *args, **kwargs):
 		super(GridTetrisRunner, self).__init__(*args, **kwargs)
 		self.width = 16
 		self.height = 16
