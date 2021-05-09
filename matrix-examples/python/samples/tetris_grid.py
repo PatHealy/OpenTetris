@@ -20,7 +20,7 @@ class TetrisGrid(SampleBase):
 
             for x in range(self.matrix.width):
                 for y in range(self.matrix.height):
-                    c = grid[((int)x)/4][((int)y)/4]
+                    c = grid[(int(x))/4][(int(y))/4]
                     offset_canvas.SetPixel(x, x, 255, 255, 255)
             offset_canvas = self.matrix.SwapOnVSync(offset_canvas)
 
