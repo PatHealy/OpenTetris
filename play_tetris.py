@@ -103,14 +103,14 @@ class TetrisGrid(SampleBase):
 	def __init__(self, *args, **kwargs):
 		super(TetrisGrid, self).__init__(*args, **kwargs)
 		self.tet_grid = []
-			for x in range(16):
-				row = []
-				for y in range(16):
-					if x%2 == y%2:
-						row.append((0,0,0))
-					else:
-						row.append((255,255,255))
-				self.tet_grid.append(row)
+		for x in range(16):
+			row = []
+			for y in range(16):
+				if x%2 == y%2:
+					row.append((0,0,0))
+				else:
+					row.append((255,255,255))
+			self.tet_grid.append(row)
 
 	def set_grid(self, gr):
 		self.tet_grid = gr
