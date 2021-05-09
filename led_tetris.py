@@ -42,6 +42,8 @@ class GridTetrisRunner(SampleBase):
 		self.width = 16
 		self.height = 16
 		self.game = Tetris(self.width, self.height)
+		self.prior_data = self.game.get_board()
+
 
 	def new_game(self):
 		self.game = Tetris(self.width, self.height)
