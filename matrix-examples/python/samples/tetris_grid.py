@@ -3,7 +3,7 @@ from samplebase import SampleBase
 
 class TetrisGrid(SampleBase):
     def __init__(self, *args, **kwargs):
-        super(SimpleSquare, self).__init__(*args, **kwargs)
+        super(TetrisGrid, self).__init__(*args, **kwargs)
         self.args.led_rows = 64
         self.args.led_cols = 64
 
@@ -26,6 +26,6 @@ class TetrisGrid(SampleBase):
 
 # Main function
 if __name__ == "__main__":
-    simple_square = SimpleSquare()
-    if (not simple_square.process()):
-        simple_square.print_help()
+    tetris_grid = TetrisGrid()
+    if (not tetris_grid.process()):
+        tetris_grid.print_help()
