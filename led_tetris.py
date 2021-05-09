@@ -64,6 +64,8 @@ class TetrisGrid(SampleBase):
 class GridTetrisRunner:
 	def __init__(self):
 		self.led_grid = TetrisGrid()
+		if (not self.led_grid.process()):
+			self.led_grid.print_help()
 		self.width = 16
 		self.height = 16
 		self.game = Tetris(self.width, self.height)
