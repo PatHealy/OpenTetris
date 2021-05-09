@@ -35,37 +35,10 @@ class _GetchWindows:
 		import msvcrt
 		return msvcrt.getch()
 
-class TetrisGrid(SampleBase):
-	def __init__(self, *args, **kwargs):
-		super(TetrisGrid, self).__init__(*args, **kwargs)
-		self.tet_grid = []
-		for x in range(16):
-			row = []
-			for y in range(16):
-				if x%2 == y%2:
-					row.append((0,0,0))
-				else:
-					row.append((255,255,255))
-			self.tet_grid.append(row)
 
-	def set_grid(self, gr):
-		self.tet_grid = gr
-
-	def run(self):
-		offset_canvas = self.matrix.CreateFrameCanvas()
-		while True:
-			for x in range(self.matrix.width):
-				for y in range(self.matrix.height):
-					c = self.tet_grid[int(x/4)][int(y/4)]
-					offset_canvas.SetPixel(x, y, c[0], c[1], c[2])
-			offset_canvas = self.matrix.SwapOnVSync(offset_canvas)
-
-
-class GridTetrisRunner:
+class GridTetrisRunner(SampleBase):
 	def __init__(self):
-		self.led_grid = TetrisGrid()
-		if (not self.led_grid.process()):
-			self.led_grid.print_help()
+		super(TetrisGrid, self).__init__(*args, **kwargs)
 		self.width = 16
 		self.height = 16
 		self.game = Tetris(self.width, self.height)
@@ -76,7 +49,11 @@ class GridTetrisRunner:
 
 	def print_board(self):
 		data = self.game.get_board()
-		self.led_grid.set_grid(data)
+		for x in range(self.matrix.width):
+				for y in range(self.matrix.height):
+					c = data[int(x/4)][int(y/4)]
+					offset_canvas.SetPixel(x, y, c[0], c[1], c[2])
+			offset_canvas = self.matrix.SwapOnVSync(offset_canvas)
 
 	def get_input(self):
 		char = _Getch().__call__()
@@ -97,8 +74,9 @@ class GridTetrisRunner:
 
 		return success
 
-	def play(self):
+	def run(self):
 		print("WASD to move, R to rotate, X to quit")
+		offset_canvas = self.matrix.CreateFrameCanvas()
 		while True:
 			while not self.game.is_failed():
 				self.print_board()
@@ -108,6 +86,10 @@ class GridTetrisRunner:
 			self.get_input()
 			self.new_game()
 
+
+
 if __name__ == '__main__':
 	runner = GridTetrisRunner()
-	runner.play()
+	if (not runner.process()):
+		runner.print_help()
+	# runner.play()
