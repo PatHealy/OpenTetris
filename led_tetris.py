@@ -52,8 +52,8 @@ class GridTetrisRunner(SampleBase):
 		for x in range(self.matrix.width):
 			for y in range(self.matrix.height):
 				c = data[int(x/4)][int(y/4)]
-				offset_canvas.SetPixel(x, y, c[0], c[1], c[2])
-			offset_canvas = self.matrix.SwapOnVSync(offset_canvas)
+				self.offset_canvas.SetPixel(x, y, c[0], c[1], c[2])
+			self.offset_canvas = self.matrix.SwapOnVSync(self.offset_canvas)
 
 	def get_input(self):
 		char = _Getch().__call__()
@@ -76,7 +76,7 @@ class GridTetrisRunner(SampleBase):
 
 	def run(self):
 		print("WASD to move, R to rotate, X to quit")
-		offset_canvas = self.matrix.CreateFrameCanvas()
+		self.offset_canvas = self.matrix.CreateFrameCanvas()
 		while True:
 			while not self.game.is_failed():
 				self.print_board()
