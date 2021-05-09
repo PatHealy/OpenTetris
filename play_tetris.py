@@ -2,6 +2,8 @@ import sys
 from sty import fg, bg, ef, rs, RgbFg
 from entities import Tetris
 
+from matrix_examples.python.samples.samplebase import SampleBase
+
 class _Getch:
 	"""Gets a single character from standard input.  Does not echo to the
 	screen."""
@@ -39,8 +41,9 @@ class _GetchWindows:
 class TerminalTetrisRunner:
 
 	def __init__(self):
-		self.width = 10
-		self.height = 20
+		self.tetris_grid = TetrisGrid()
+		self.width = 16
+		self.height = 16
 		self.game = Tetris(self.width, self.height)
 
 	def new_game(self):
@@ -59,6 +62,7 @@ class TerminalTetrisRunner:
 
 	def print_board(self):
 		data = self.game.get_board()
+		self.tetris_grid.set_grid(data)
 		for i in range(len(data)):
 			line = ''
 			for cell in data[len(data) - 1 - i]:
@@ -94,6 +98,39 @@ class TerminalTetrisRunner:
 			self.print_board()
 			self.get_input()
 			self.new_game()
+
+class TetrisGrid(SampleBase):
+    def __init__(self, *args, **kwargs):
+        super(TetrisGrid, self).__init__(*args, **kwargs)
+        self.tet_grid = []
+            for x in range(16):
+                row = []
+                for y in range(16):
+                    if x%2 == y%2:
+                        row.append((0,0,0))
+                    else:
+                        row.append((255,255,255))
+                self.tet_grid.append(row)
+
+    def set_grid(self, gr):
+    	self.tet_grid = gr
+
+    def run(self):
+        offset_canvas = self.matrix.CreateFrameCanvas()
+        while True:
+            for x in range(self.matrix.width):
+                for y in range(self.matrix.height):
+                    c = self.tet_grid[(int(x))/4][(int(y))/4]
+                    offset_canvas.SetPixel(x, y, c[0], c[1], c[2])
+            offset_canvas = self.matrix.SwapOnVSync(offset_canvas)
+
+
+# Main function
+# if __name__ == "__main__":
+#     tetris_grid = TetrisGrid()
+#     if (not tetris_grid.process()):
+#         tetris_grid.print_help()
+
 
 if __name__ == '__main__':
 	runner = TerminalTetrisRunner()
