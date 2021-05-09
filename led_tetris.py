@@ -56,7 +56,7 @@ class TetrisGrid(SampleBase):
 		while True:
 			for x in range(self.matrix.width):
 				for y in range(self.matrix.height):
-					c = self.tet_grid[(int(x))/4][(int(y))/4]
+					c = self.tet_grid[int(x/4)][int(y/4)]
 					offset_canvas.SetPixel(x, y, c[0], c[1], c[2])
 			offset_canvas = self.matrix.SwapOnVSync(offset_canvas)
 
