@@ -51,7 +51,7 @@ class GridTetrisRunner(SampleBase):
 		data = self.game.get_board()
 		for x in range(self.matrix.width):
 			for y in range(self.matrix.height):
-				if data[int(x/4)][int(y/4)] != self.prior_data[int(x/4)][int(y/4)]
+				if data[int(x/4)][int(y/4)] != self.prior_data[int(x/4)][int(y/4)]:
 					c = data[int(x/4)][int(y/4)]
 					self.offset_canvas.SetPixel(x, y, c[0], c[1], c[2])
 			self.offset_canvas = self.matrix.SwapOnVSync(self.offset_canvas)
