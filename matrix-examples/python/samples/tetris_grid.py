@@ -4,8 +4,6 @@ from samplebase import SampleBase
 class TetrisGrid(SampleBase):
     def __init__(self, *args, **kwargs):
         super(TetrisGrid, self).__init__(*args, **kwargs)
-        self.args.led_rows = 64
-        self.args.led_cols = 64
 
     def run(self):
         offset_canvas = self.matrix.CreateFrameCanvas()
