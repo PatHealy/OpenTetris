@@ -81,6 +81,7 @@ class GridTetrisRunner(SampleBase):
 			while not self.game.is_failed():
 				self.print_board()
 				self.get_input()
+				self.print_board()
 				#self.erase_board()
 			self.print_board()
 			self.get_input()
