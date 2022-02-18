@@ -83,8 +83,8 @@ Using the library
 Be aware of the fact, that using the RGBMatrix requires root privileges.
 Therefore you will need to run all you python scripts as using sudo.
 
-You find examples in the [samples/](./samples) subdirectory.
-The examples all use the [samplebase.py](./samples/samplebase.py) that provides
+You find examples in the [samples/](samples) subdirectory.
+The examples all use the [samplebase.py](samples/samplebase.py) that provides
 some utility to all example programs, such as command-line parsing: all
 sample-programs accept `--led-rows`, `--led-chain` and `--led-parallel` as
 command line options to adapt to your configuration

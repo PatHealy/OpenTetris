@@ -1,6 +1,5 @@
 # distutils: language = c++
 
-from libcpp cimport bool
 from libc.stdint cimport uint8_t, uint32_t
 
 cimport core

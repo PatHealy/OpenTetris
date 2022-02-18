@@ -1,8 +1,6 @@
 # distutils: language = c++
 
-from libcpp cimport bool
 from libc.stdint cimport uint8_t, uint32_t, uintptr_t
-from PIL import Image
 import cython
 
 cdef class Canvas:
@@ -196,7 +194,7 @@ cdef class RGBMatrix(Canvas):
             options.parallel = parallel
 
         self.__matrix = cppinc.CreateMatrixFromOptions(options.__options,
-            options.__runtime_options)
+                                                       options.__runtime_options)
 
     def __dealloc__(self):
         self.__matrix.Clear()
