@@ -19,6 +19,8 @@ To run the GUI, run app.py with a parameter "GUI" like this:
 python app.py GUI
 ```
 
+This requires you have pygame installed.
+
 ## Run on an LED board
 
 This isn't finished yet!
