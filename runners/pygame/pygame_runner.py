@@ -2,8 +2,8 @@ import pygame
 from core.game import TetrisRunner
 
 class PygameTetrisRunner(TetrisRunner):
-	def __init__(self, width=10, height=20):
-		super().__init__(width, height)
+	def __init__(self, width=10, height=20, debug_mode=False):
+		super().__init__(width, height, debug_mode=debug_mode)
 		pygame.init()
 		pygame.display.set_caption('Open Tetris')
 		self.clock = pygame.time.Clock()
@@ -47,7 +47,7 @@ class PygameTetrisRunner(TetrisRunner):
 					pygame.quit()
 					exit()
 		self.tick = self.tick + 1
-		if self.tick > 10:
+		if self.tick > 5:
 			keys = pygame.key.get_pressed()
 			if keys[pygame.K_a]:
 				success = self.game.move_piece('left')
@@ -58,7 +58,7 @@ class PygameTetrisRunner(TetrisRunner):
 			elif keys[pygame.K_s]:
 				success = self.game.move_piece('down')
 				self.tick = 0
-		if self.tick > 60:
+		if self.tick > 45:
 			success = self.game.move_piece('down')
 			self.tick = 0
 

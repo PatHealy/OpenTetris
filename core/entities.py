@@ -1,6 +1,9 @@
 # Objects related to the game of tetris
 import random
 import operator
+import sys
+sys.path.insert(0, '../')
+from utilities import aggregate_height, column_height, hole_count, bumpiness, lines_cleared, get_score
 
 class Piece:
 	def __init__(self, width, height):
@@ -100,6 +103,7 @@ class Board:
 		self.height = height
 		self.data = [[(0,0,0) for x in range(width)] for y in range(height + 3)]
 		self.score = 0
+		self.lines_cleared = 0
 
 	def get_data(self):
 		data_copy = [[(self.data[y][x][0], self.data[y][x][1], self.data[y][x][2]) for x in range(self.width)] for y in range(self.height + 3)]
@@ -128,6 +132,7 @@ class Board:
 			if clear:
 				lines_cleared = lines_cleared + 1
 				self.data[i] = [(255,255,255) for x in range(self.width)]
+		self.lines_cleared = self.lines_cleared + lines_cleared
 		self.score = self.score + 100*lines_cleared**2
 
 	def remove_cleared_lines(self):
@@ -156,12 +161,16 @@ class Board:
 	def get_score(self):
 		return 0 + self.score
 
+	def get_lines_cleared(self):
+		return 0 + self.lines_cleared
+
 class Tetris:
-	def __init__(self, width, height):
+	def __init__(self, width, height, debug_mode=False):
 		self.width = width
 		self.height = height
 		self.board = Board(width, height)
 		self.piece = Piece(width, height)
+		self.debug_mode = debug_mode
 
 	def is_overlap(self):
 		board_data = self.board.get_data()
@@ -214,6 +223,16 @@ class Tetris:
 
 		while self.move_piece('down'):
 			pass
+
+		if self.debug_mode:
+			board = self.board
+			print("=============================")
+			print("Aggregate Height: " + str(aggregate_height(board)))
+			print("Column Height: " + str(column_height(board)))
+			print("Hole Count: " + str(hole_count(board)))
+			print("Bumpiness: " + str(bumpiness(board)))
+			print("Lines Cleared: " + str(lines_cleared(board)))
+			print("Score: " + str(get_score(board)))
 
 		return True
 

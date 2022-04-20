@@ -2,10 +2,10 @@ from core.entities import Tetris
 
 class TetrisRunner:
 
-	def __init__(self, width=10, height=20):
+	def __init__(self, width=10, height=20, debug_mode=False):
 		self.width = width
 		self.height = height
-		self.game = Tetris(self.width, self.height)
+		self.game = Tetris(self.width, self.height, debug_mode=debug_mode)
 
 	def new_game(self):
 		self.game = Tetris(self.width, self.height)
