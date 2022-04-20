@@ -1,9 +1,10 @@
+from runners.pygame.pygame_runner import PygameTetrisRunner
 import neat
 import os
-from utilities import *
 import sys
 sys.path.insert(0, './core')
 from entities import *
+from utilities import *
 
 #Fitness function to determine best genome
 def eval_genomes(genome, config):
@@ -17,16 +18,43 @@ def eval_genomes(genome, config):
     #create neural network
     net = neat.nn.FeedForwardNetwork.create(genome, config)
 
+    #reset game
 
     #Play the game
     #as long as game is active - move, rotate, & drop pieces
-    
+    runner = PygameTetrisRunner()
+    runner.play()
+
+    while (not is_failed()):
+
+        #Input heuristics
+        a_height = aggregate_height(self.board)
+        holes = hole_count(self.board)
+        bumpiness = bumpiness(self.board)
+        lines = lines_cleared(self.board)
+        #score = get_score(self.board)
+
+        inputs = [a_height, holes, bumpiness, lines]
+
+        #Put inputs into the neural network
+        for i in inputs:
+            score = net.activate(i)
+
+        while (not add_piece(self.piece) and not is_failed()):
+
+            #move_piece
+
+            #rotate_piece
+
+            pass
 
     #Heuristics from Utilities.py increase or decrease fitness
     #Example: score
         #game.get_score()
-        #fitness += score
-    
+
+        fitness += score
+
+    return fitness
     
 
 #Using configuration file, create the population and iterate through generations
