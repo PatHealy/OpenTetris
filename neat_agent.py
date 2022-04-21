@@ -5,56 +5,67 @@ import sys
 sys.path.insert(0, './core')
 from entities import *
 from utilities import *
+sys.path.insert(0, './runners')
+from terminal_runner import *
 
 #Fitness function to determine best genome
-def eval_genomes(genome, config):
+def eval_genomes(genomes, config):
 
-    #iterate through genomes
-    #for genome_id, genome in genomes:        
-    
-    #set intial fitness
-    fitness = 0
+    for genome_id, genome in genomes:
+        #iterate through genomes
+        #for genome_id, genome in genomes:        
+        
+        #set intial fitness
+        fitness = 0
 
-    #create neural network
-    net = neat.nn.FeedForwardNetwork.create(genome, config)
+        #create neural network
+        net = neat.nn.FeedForwardNetwork.create(genome, config)
 
-    #reset game
+        #reset game
 
-    #Play the game
-    #as long as game is active - move, rotate, & drop pieces
-    runner = PygameTetrisRunner()
-    runner.play()
+        #Play the game
+        #as long as game is active - move, rotate, & drop pieces
+        runner = TerminalTetrisRunner(TetrisRunner)
+        runner.play()
 
-    while (not is_failed()):
+        while (not is_failed()):
 
-        #Input heuristics
-        a_height = aggregate_height(self.board)
-        holes = hole_count(self.board)
-        bumpiness = bumpiness(self.board)
-        lines = lines_cleared(self.board)
-        #score = get_score(self.board)
+            #Input heuristics
+            a_height = aggregate_height(self.board)
+            holes = hole_count(self.board)
+            bumpiness = bumpiness(self.board)
+            lines = lines_cleared(self.board)
+            #score = get_score(self.board)
 
-        inputs = [a_height, holes, bumpiness, lines]
+            inputs = [a_height, holes, bumpiness, lines]
 
-        #Put inputs into the neural network
-        for i in inputs:
-            score = net.activate(i)
+            #Put inputs into the neural network
 
-        while (not add_piece(self.piece) and not is_failed()):
+            score = 0
+            
+            for i in inputs:
+                score = net.activate(i)
 
-            #move_piece
+    ##        while (not add_piece(self.piece) and not is_failed()):
+    ##
+    ##            directions = ['down', 'up', 'left', 'right']
+    ##            #move_piece
+    ##            #rotate_piece
+    ##
+    ##            moves = {}
+    ##
+    ##            for direction in directions:
+    ##                move = move_piece(direction)
+    ##                rotation = rotate_piece()
+    ##                if (move and rotation):
+    ##                    moves[direction] = True
+                    
 
-            #rotate_piece
+            #Heuristics from Utilities.py increase or decrease fitness
+            #Example: score
+            #game.get_score()
 
-            pass
-
-    #Heuristics from Utilities.py increase or decrease fitness
-    #Example: score
-        #game.get_score()
-
-        fitness += score
-
-    return fitness
+            genome.fitness += score
     
 
 #Using configuration file, create the population and iterate through generations
