@@ -1,8 +1,7 @@
 import random
 import sys
 sys.path.insert(0, './core')
-
-board = None
+from entities import *
 
 def aggregate_height(board):
     #board is a Board object (see the class definition in core/entities.py
