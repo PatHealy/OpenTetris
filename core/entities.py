@@ -2,11 +2,10 @@
 import random
 import operator
 import sys
-sys.path.insert(0, '../')
-from utilities import aggregate_height, column_height, hole_count, bumpiness, lines_cleared, get_score
+#from utilities import aggregate_height, column_height, hole_count, bumpiness, lines_cleared, get_score
 
 class Piece:
-	def __init__(self, width, height):
+	def __init__(self, width, height, previous_shape):
 		self.types = {
 			'I': ((0,-1), (0,1), (0,2)), # vertical line
 			'_': ((-1,0), (1,0), (2,0)), # horizontal line
@@ -66,6 +65,9 @@ class Piece:
 		colors = [(0, 240, 240), (240, 240, 0), (160, 0, 240), (0, 240, 0), (240, 0, 0), (0, 0, 240), (240, 160, 0)]
 
 		shape_index = random.randint(0, len(starters)-1)
+		while shape_index == previous_shape:
+			shape_index = random.randint(0, len(starters) - 1)
+		self.shape_index = shape_index
 		self.shape = starters[shape_index]
 		self.color = colors[shape_index]
 		self.center = (width//2, height + 1)
@@ -169,7 +171,7 @@ class Tetris:
 		self.width = width
 		self.height = height
 		self.board = Board(width, height)
-		self.piece = Piece(width, height)
+		self.piece = Piece(width, height, -1)
 		self.debug_mode = debug_mode
 
 	def is_overlap(self):
@@ -196,7 +198,7 @@ class Tetris:
 			self.piece.move(opposites[direction])
 			if direction == "down":
 				self.board.add_piece(self.piece)
-				self.piece = Piece(self.width, self.height)
+				self.piece = Piece(self.width, self.height, self.piece.shape_index)
 			return False
 
 		return True
