@@ -1,25 +1,32 @@
 # Open Tetris
 Code to run a Tetris game on various displays.
 
+## Controls
+- WASD to move (w to snap)
+- R to rotate
+- x to close the game
+- In the multiplayer mode, Arrows to move, RControl to rotate
 
-Currently, one display method is supported but 2 others are in development.
-
-## Run in Terminal
-To run in terminal, simply run app.py, which will call runners.terminal.terminal_runner.py:
+## Run in a PyGame GUI
+To run the GUI, run app.py with no parameters:
 ```bash
 python app.py
 ```
+This requires you have pygame installed.
 
+## Run Multiplayer Game 
+```bash
+python app.py multiplayer
+```
+This requires you have pygame installed.
+
+## Run in Terminal
+To run in terminal, run app.py with parameter "terminal":
+```bash
+python app.py terminal
+```
 This requires the package sty. Given how it uses colored text, I can only confirm it to run on Linux terminals 
 (tested on Ubuntu terminal for Windows).
-
-## Run in a PyGame GUI
-To run the GUI, run app.py with a parameter "GUI" like this:
-```bash
-python app.py GUI
-```
-
-This requires you have pygame installed.
 
 ## Run on an LED board
 

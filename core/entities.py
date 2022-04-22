@@ -1,8 +1,6 @@
 # Objects related to the game of tetris
 import random
 import operator
-import sys
-#from utilities import aggregate_height, column_height, hole_count, bumpiness, lines_cleared, get_score
 
 class Piece:
 	def __init__(self, width, height, previous_shape):
@@ -253,3 +251,9 @@ class Tetris:
 
 	def get_score(self):
 		return self.board.get_score()
+
+	def add_opponent_lines(self, nlines):
+		for i in range(nlines):
+			row = [(70, 70, 70)] * self.width
+			row[random.randint(0, self.width-1)] = (0,0,0)
+			self.board.data = [row] + self.board.data[:-1]

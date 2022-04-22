@@ -23,6 +23,12 @@ class MultiplayerRunner:
 	def erase_board(self):
 		self.screen.fill((0, 0, 0))
 
+	def draw_grid(self, xOffset):
+		for i in range(self.width-1):
+			pygame.draw.rect(self.screen, (100,100,100), pygame.Rect(i * 50 + 48 + xOffset, 0, 4, (self.height+3)*50))
+		for i in range(self.height+2):
+			pygame.draw.rect(self.screen, (100,100,100), pygame.Rect(xOffset, i * 50 + 48, self.width*50, 4))
+
 	def display_board(self):
 		p1_data = self.player1.get_board()
 		p2_data = self.player2.get_board()
@@ -37,71 +43,131 @@ class MultiplayerRunner:
 				cell = p2_data[y][x]
 				pygame.draw.rect(self.screen, cell, pygame.Rect(x * 50 + self.width * 50 + 50, (self.height - y + 2) * 50, 50, 50))
 
-		pygame.draw.rect(self.screen, (255, 255, 255), pygame.Rect(self.width * 50, 0, 50, 50 * self.height))
+		pygame.draw.rect(self.screen, (150, 150, 150), pygame.Rect(self.width * 50, 0, 50, 50 * (self.height+3)))
+		self.draw_grid(0)
+		self.draw_grid(self.width * 50 + 50)
+
 		pygame.display.flip()
 
 	def display_winner(self):
 		announcement = "Player 1 Wins!"
 		if self.player1.is_failed():
 			announcement = "Player 2 Wins!"
+		print(announcement)
 		font = pygame.font.Font(None, 25)
 		text = font.render(announcement, True, (255, 255, 255))
 		text_rect = text.get_rect(center=(((2 * self.width + 1) * 50) / 2, ((self.height + 3) * 50) / 2))
 		self.screen.blit(text, text_rect)
 
 	def get_input(self):
-		# success = False
-		# for event in pygame.event.get():
-		# 	if event.type == pygame.QUIT:
-		# 		pygame.quit()
-		# 		exit()
-		# 	if event.type == pygame.KEYDOWN:
-		# 		if event.key == pygame.K_a:
-		# 			success = self.game.move_piece('left')
-		# 			self.tick = 0
-		# 		elif event.key == pygame.K_w:
-		# 			self.tick = 0
-		# 			success = self.game.snap_piece()
-		# 		elif event.key == pygame.K_s:
-		# 			self.tick = 0
-		# 			success = self.game.move_piece('down')
-		# 		elif event.key == pygame.K_d:
-		# 			self.tick = 0
-		# 			success = self.game.move_piece('right')
-		# 		elif event.key == pygame.K_r:
-		# 			self.tick = 0
-		# 			success = self.game.rotate_piece()
-		# 		elif event.key == pygame.K_x:
-		# 			pygame.quit()
-		# 			exit()
-		# self.tick = self.tick + 1
-		# if self.tick > 5:
-		# 	keys = pygame.key.get_pressed()
-		# 	if keys[pygame.K_a]:
-		# 		success = self.game.move_piece('left')
-		# 		self.tick = 0
-		# 	elif keys[pygame.K_d]:
-		# 		success = self.game.move_piece('right')
-		# 		self.tick = 0
-		# 	elif keys[pygame.K_s]:
-		# 		success = self.game.move_piece('down')
-		# 		self.tick = 0
-		# if self.tick > 45:
-		# 	success = self.game.move_piece('down')
-		# 	self.tick = 0
-		#
-		# self.clock.tick(40)
-		# return success
-		pass
+		p1success = False
+		p2success = False
+		p1_total_lines_cleared = self.player1.board.lines_cleared
+		p2_total_lines_cleared = self.player2.board.lines_cleared
+
+		for event in pygame.event.get():
+			if event.type == pygame.QUIT:
+				pygame.quit()
+				exit()
+			if event.type == pygame.KEYDOWN:
+				#Get player 1 input
+				if event.key == pygame.K_a:
+					p1success = self.player1.move_piece('left')
+					self.p1tick = 0
+				elif event.key == pygame.K_w:
+					self.p1tick = 0
+					p1success = self.player1.snap_piece()
+				elif event.key == pygame.K_s:
+					self.p1tick = 0
+					p1success = self.player1.move_piece('down')
+				elif event.key == pygame.K_d:
+					self.p1tick = 0
+					p1success = self.player1.move_piece('right')
+				elif event.key == pygame.K_r:
+					self.p1tick = 0
+					p1success = self.player1.rotate_piece()
+				#Get Player 2 input
+				if event.key == pygame.K_LEFT:
+					p2success = self.player2.move_piece('left')
+					self.p2tick = 0
+				elif event.key == pygame.K_UP:
+					self.p2tick = 0
+					p2success = self.player2.snap_piece()
+				elif event.key == pygame.K_DOWN:
+					self.p2tick = 0
+					p2success = self.player2.move_piece('down')
+				elif event.key == pygame.K_RIGHT:
+					self.p2tick = 0
+					p2success = self.player2.move_piece('right')
+				elif event.key == pygame.K_RCTRL:
+					self.p2tick = 0
+					p2success = self.player2.rotate_piece()
+				if event.key == pygame.K_x:
+					pygame.quit()
+					exit()
+
+		self.p1tick = self.p1tick + 1
+		self.p2tick = self.p2tick + 1
+
+		#Player 1 ticks
+		if self.p1tick > 5:
+			keys = pygame.key.get_pressed()
+			if keys[pygame.K_a]:
+				p1success = self.player1.move_piece('left')
+				self.p1tick = 0
+			elif keys[pygame.K_d]:
+				p1success = self.player1.move_piece('right')
+				self.p1tick = 0
+			elif keys[pygame.K_s]:
+				p1success = self.player1.move_piece('down')
+				self.p1tick = 0
+		if self.p1tick > 45:
+			p1success = self.player1.move_piece('down')
+			self.p1tick = 0
+
+		#Player 2 ticks
+		if self.p2tick > 5:
+			keys = pygame.key.get_pressed()
+			if keys[pygame.K_LEFT]:
+				p2success = self.player2.move_piece('left')
+				self.p2tick = 0
+			elif keys[pygame.K_RIGHT]:
+				p2success = self.player2.move_piece('right')
+				self.p2tick = 0
+			elif keys[pygame.K_DOWN]:
+				p2success = self.player2.move_piece('down')
+				self.p2tick = 0
+		if self.p2tick > 45:
+			p2success = self.player2.move_piece('down')
+			self.p2tick = 0
+
+		p1_line_clears = self.player1.board.lines_cleared - p1_total_lines_cleared
+		p2_line_clears = self.player2.board.lines_cleared - p2_total_lines_cleared
+
+		if p1_line_clears == 2:
+			self.player2.add_opponent_lines(1)
+		elif p1_line_clears == 3:
+			self.player2.add_opponent_lines(2)
+		elif p1_line_clears == 4:
+			self.player2.add_opponent_lines(4)
+
+		if p2_line_clears == 2:
+			self.player1.add_opponent_lines(1)
+		elif p2_line_clears == 3:
+			self.player1.add_opponent_lines(2)
+		elif p2_line_clears == 4:
+			self.player1.add_opponent_lines(4)
+
+		self.clock.tick(40)
+		return p1success, p2success
 
 	def play(self):
 		while True:
-			while not self.player1.is_failed() or self.player2.is_failed():
+			while not (self.player1.is_failed() or self.player2.is_failed()):
 				self.display_board()
 				self.get_input()
 				self.erase_board()
-			self.display_board()
-			self.get_input()
+			self.display_winner()
 			self.new_game()
 
 
