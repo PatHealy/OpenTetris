@@ -189,15 +189,20 @@ class Tetris:
 
 	def move_piece(self, direction):
 		if self.is_failed():
+			if self.debug_mode:
+				print("Failed move")
 			return False
 		self.board.remove_cleared_lines()
 
 		opposites = {'up': 'down', 'down': 'up', 'left': 'right', 'right': 'left'}
 		self.piece.move(direction)
+		if self.debug_mode:
+			print("Moving piece: " + direction)
 
 		if self.is_overlap():
 			self.piece.move(opposites[direction])
 			if direction == "down":
+				print("Adding piece to the board: " + self.piece.shape)
 				self.board.add_piece(self.piece)
 				self.piece = Piece(self.width, self.height, self.piece.shape_index)
 			return False
@@ -212,6 +217,8 @@ class Tetris:
 		self.piece.rotate()
 
 		if self.is_overlap():
+			if self.debug_mode:
+				print("Rotation failed")
 			self.piece.rotate()
 			self.piece.rotate()
 			self.piece.rotate()
@@ -223,6 +230,9 @@ class Tetris:
 		if self.is_failed():
 			return False
 		self.board.remove_cleared_lines()
+
+		if self.debug_mode:
+			print("Snapping piece: " + self.piece.shape)
 
 		while self.move_piece('down'):
 			pass

@@ -1,5 +1,5 @@
 from runners import PygameTetrisRunner, MultiplayerRunner, TerminalTetrisRunner
-from single_player import SingleTrainer
+from single_player import SingleTrainer, SingleTester
 import sys
 
 if __name__ == '__main__':
@@ -15,3 +15,6 @@ if __name__ == '__main__':
 	elif sys.argv[1] == "trainP1":
 		trainer = SingleTrainer()
 		trainer.train()
+	elif sys.argv[1] == "testP1":
+		tester = SingleTester()
+		tester.play()
