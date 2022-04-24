@@ -2,6 +2,9 @@
 import random
 import operator
 
+from core.utilities import *
+
+
 class Piece:
 	def __init__(self, width, height, previous_shape):
 		self.types = {
@@ -101,12 +104,12 @@ class Board:
 	def __init__(self, width, height):
 		self.width = width
 		self.height = height
-		self.data = [[(0,0,0) for x in range(width)] for y in range(height + 3)]
+		self.data = [[(0,0,0) for x in range(width)] for y in range(height + 4)]
 		self.score = 0
 		self.lines_cleared = 0
 
 	def get_data(self):
-		data_copy = [[(self.data[y][x][0], self.data[y][x][1], self.data[y][x][2]) for x in range(self.width)] for y in range(self.height + 3)]
+		data_copy = [[(self.data[y][x][0], self.data[y][x][1], self.data[y][x][2]) for x in range(self.width)] for y in range(self.height + 4)]
 		return data_copy
 
 	def fail_board(self):
@@ -176,7 +179,7 @@ class Tetris:
 		board_data = self.board.get_data()
 		try:
 			for c in self.piece.get_coordinates():
-				if c[0] >= self.width or c[0] < 0 or c[1] < 0 or c[1] >= self.height + 4:
+				if c[0] >= self.width or c[0] < 0 or c[1] < 0:
 					return True
 				if not board_data[c[1]][c[0]] == (0,0,0):
 					return True
@@ -225,14 +228,8 @@ class Tetris:
 			pass
 
 		if self.debug_mode:
-			board = self.board
-			print("=============================")
-			print("Aggregate Height: " + str(aggregate_height(board)))
-			print("Column Height: " + str(column_height(board)))
-			print("Hole Count: " + str(hole_count(board)))
-			print("Bumpiness: " + str(bumpiness(board)))
-			print("Lines Cleared: " + str(lines_cleared(board)))
-			print("Score: " + str(get_score(board)))
+			params = ModelParams(generate=True, board=self.board)
+			params.print_summary()
 
 		return True
 
