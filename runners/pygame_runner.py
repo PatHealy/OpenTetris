@@ -15,11 +15,13 @@ class PygameTetrisRunner(TetrisRunner):
 
 	def draw_grid(self):
 		for i in range(self.width-1):
-			pygame.draw.rect(self.screen, (100,100,100), pygame.Rect(i * 50 + 48, 0, 4, (self.height+3)*50))
+			pygame.draw.rect(self.screen, (100,100,100), pygame.Rect(i * 50 + 48, 3*50, 4, (self.height+3)*50))
 		for i in range(self.height+2):
-			pygame.draw.rect(self.screen, (100,100,100), pygame.Rect(0, i * 50 + 48, self.width*50, 4))
+			if i > 1:
+				pygame.draw.rect(self.screen, (100,100,100), pygame.Rect(0, i * 50 + 48, self.width*50, 4))
 
 	def display_board(self):
+		pygame.display.set_caption('Open Tetris | Score: ' + str(self.game.get_score()) + " | Lines cleared: " + str(self.game.board.get_lines_cleared()))
 		data = self.game.get_board()
 
 		for y in range(len(data)):
@@ -74,6 +76,15 @@ class PygameTetrisRunner(TetrisRunner):
 
 		self.clock.tick(40)
 		return success
+
+	def wait_for_input(self):
+		for event in pygame.event.get():
+			pass
+		events = 0
+		while events == 0:
+			for event in pygame.event.get():
+				events += 1
+			self.clock.tick(40)
 
 	def play(self):
 		super().play()

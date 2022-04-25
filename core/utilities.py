@@ -1,6 +1,4 @@
-import copy
 import random
-import operator
 import sys
 sys.path.insert(0, './core')
 from entities import *
@@ -272,7 +270,7 @@ def generate_piece_possibilities(tetris, model, piece_rotations):
             piece.center = (x_start, piece.center[1])
             tmp_tetris = Tetris(width, height)
             tmp_tetris.piece = piece
-            tmp_tetris.board = copy.deepcopy(initial_board)
+            tmp_tetris.board = initial_board.get_copy()
 
             if not tmp_tetris.is_overlap():
                 tmp_tetris.snap_piece()

@@ -71,6 +71,8 @@ class Piece:
 		self.shape_index = shape_index
 		self.shape = starters[shape_index]
 		self.color = colors[shape_index]
+		self.width = width
+		self.height = height
 		self.center = (width//2, height + 1)
 
 	def rotate(self):
@@ -100,6 +102,14 @@ class Piece:
 
 		return coordinates
 
+	def get_copy(self):
+		tmp = Piece(self.width, self.height, -1)
+		tmp.shape_index = self.shape_index
+		tmp.shape = self.shape
+		tmp.color = self.color
+		tmp.center = self.center
+		return tmp
+
 class Board:
 	def __init__(self, width, height):
 		self.width = width
@@ -117,12 +127,12 @@ class Board:
 			for j in range(len(self.data[i])):
 				if self.data[i][j] == (0,0,0):
 					self.data[i][j] = (50,0,0)
-		return True
 
 	def is_failed(self):
 		for cell in self.data[self.height]:
-			if not cell == (0,0,0):
-				return self.fail_board()
+			if not (cell == (0,0,0)):
+				self.fail_board()
+				return True
 		return False
 
 	def check_for_line_clear(self):
@@ -130,7 +140,7 @@ class Board:
 		for i in range(len(self.data)):
 			clear = True
 			for cell in self.data[i]:
-				if (cell == (0,0,0) or cell == (255,255,255)):
+				if cell == (0,0,0) or cell == (255,255,255):
 					clear = False
 			if clear:
 				lines_cleared = lines_cleared + 1
@@ -139,26 +149,35 @@ class Board:
 		self.score = self.score + 100*lines_cleared**2
 
 	def remove_cleared_lines(self):
-		for i in range(len(self.data)):
+		i = 0
+		while i < len(self.data):
 			if self.data[i][0] == (255,255,255):
 				j = i
 				while j < len(self.data) - 1:
-					self.data[j] = self.data[j + 1]
+					self.data[j] = [x for x in self.data[j + 1]]
 					j = j + 1
+			else:
+				i += 1
 
-	def add_piece(self,piece):
+	def number_of_diffs(self, oldd, newd):
+		diffs = 0
+		for i in range(len(oldd)):
+			for j in range(len(oldd[0])):
+				if not (oldd[i][j] == newd[i][j]):
+					diffs += 1
+		return diffs
+
+	def add_piece(self, piece, debug=False):
 		coordinates = piece.get_coordinates()
 		color = piece.get_color()
 
 		for c in coordinates:
 			if not self.data[c[1]][c[0]] == (0,0,0):
 				return False
-
 		for c in coordinates:
-			self.data[c[1]][c[0]] = color
+			self.data[c[1]][c[0]] = (color[0], color[1], color[2])
 
 		self.check_for_line_clear()
-
 		return True
 
 	def get_score(self):
@@ -166,6 +185,13 @@ class Board:
 
 	def get_lines_cleared(self):
 		return 0 + self.lines_cleared
+
+	def get_copy(self):
+		tmp = Board(self.width, self.height)
+		tmp.data = self.get_data()
+		tmp.score = self.score
+		tmp.lines_cleared = self.lines_cleared
+		return tmp
 
 class Tetris:
 	def __init__(self, width, height, debug_mode=False):
@@ -179,10 +205,19 @@ class Tetris:
 		board_data = self.board.get_data()
 		try:
 			for c in self.piece.get_coordinates():
-				if c[0] >= self.width or c[0] < 0 or c[1] < 0:
+				if c[0] >= self.width:
+					# print("Off stage right")
+					return True
+				elif c[0] < 0:
+					# print("Off stage left")
+					return True
+				elif c[1] < 0:
+					# print("Off bottom")
 					return True
 				if not board_data[c[1]][c[0]] == (0,0,0):
+					# print("Occupied space")
 					return True
+			# print("Valid piece")
 		except IndexError:
 			return True
 		return False
@@ -193,20 +228,13 @@ class Tetris:
 				print("Failed move")
 			return False
 		self.board.remove_cleared_lines()
-
 		opposites = {'up': 'down', 'down': 'up', 'left': 'right', 'right': 'left'}
 		self.piece.move(direction)
-		if self.debug_mode:
-			print("Moving piece: " + direction)
 
 		if self.is_overlap():
-			self.piece.move(opposites[direction])
-			if direction == "down":
-				print("Adding piece to the board: " + self.piece.shape)
-				self.board.add_piece(self.piece)
-				self.piece = Piece(self.width, self.height, self.piece.shape_index)
+			while self.is_overlap():
+				self.piece.move(opposites[direction])
 			return False
-
 		return True
 
 	def rotate_piece(self):
@@ -217,8 +245,6 @@ class Tetris:
 		self.piece.rotate()
 
 		if self.is_overlap():
-			if self.debug_mode:
-				print("Rotation failed")
 			self.piece.rotate()
 			self.piece.rotate()
 			self.piece.rotate()
@@ -231,36 +257,44 @@ class Tetris:
 			return False
 		self.board.remove_cleared_lines()
 
-		if self.debug_mode:
-			print("Snapping piece: " + self.piece.shape)
-
 		while self.move_piece('down'):
 			pass
+
+		self.board.add_piece(self.piece, debug=self.debug_mode)
+		self.piece = Piece(self.width, self.height, self.piece.shape_index)
+
+		if self.is_failed() and self.debug_mode:
+			print("Failed in add")
 
 		if self.debug_mode:
 			params = ModelParams(generate=True, board=self.board)
 			params.print_summary()
-
 		return True
 
 	def is_failed(self):
 		return self.board.is_failed()
 
 	def get_board(self):
-		self.data = self.board.get_data()
+		data = self.board.get_data()
 
+		#make the current piece visible
 		color = self.piece.get_color()
-
 		for c in self.piece.get_coordinates():
-			self.data[c[1]][c[0]] = color
+			data[c[1]][c[0]] = color
 
-		return self.data
+		return data
 
 	def get_score(self):
 		return self.board.get_score()
 
 	def add_opponent_lines(self, nlines):
 		for i in range(nlines):
-			row = [(70, 70, 70)] * self.width
+			row = [(70, 70, 70) for x in self.width]
 			row[random.randint(0, self.width-1)] = (0,0,0)
 			self.board.data = [row] + self.board.data[:-1]
+
+	def get_copy(self):
+		tmp = Tetris(self.width, self.height, debug_mode=self.debug_mode)
+		tmp.board = self.board.get_copy()
+		tmp.piece = self.piece.get_copy()
+		return tmp

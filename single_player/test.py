@@ -10,7 +10,7 @@ class SingleTester:
     def __init__(self, width=10, height=20):
         self.width = width
         self.height = height
-        self.pg = PygameTetrisRunner(width, height, debug_mode=True)
+        self.pg = PygameTetrisRunner(width, height)
 
         # open the winner genome file
         with open("winner.pickle", 'rb') as genome_file:
@@ -31,8 +31,9 @@ class SingleTester:
     def display_game(self):
         self.pg.erase_board()
         self.pg.display_board()
+        self.pg.clock.tick_busy_loop(30)
 
-    def play(self):
+    def play_loop(self):
         while not self.pg.game.is_failed():
             # get list possible moves along with the respective current and future fitness
             possible_moves_result = try_possible_moves(self.pg.game, self.model)
@@ -40,14 +41,11 @@ class SingleTester:
             if possible_moves_result:
                 # best moves correspond to 0th position because of descending sort
                 best_rotation, x_position, _ = possible_moves_result[0]
-
                 self.display_game()
-                self.pg.clock.tick_busy_loop(15)
 
                 while self.pg.game.piece.shape != best_rotation.shape:
                     self.pg.game.rotate_piece()
                     self.display_game()
-                    self.pg.clock.tick_busy_loop(15)
 
                 # while min x coord does not match the best x coord keep shifting accordingly
                 while x_position != self.pg.game.piece.center[0]:
@@ -60,11 +58,20 @@ class SingleTester:
                         # move left
                         self.pg.game.move_piece("left")
                     self.display_game()
-                    self.pg.clock.tick_busy_loop(15)
 
                 self.pg.game.snap_piece()
                 self.display_game()
-                self.pg.clock.tick_busy_loop(15)
+                #
         print("Failed")
+        self.display_game()
+
+    def play(self):
         while True:
-            self.pg.clock.tick_busy_loop(1)
+            self.play_loop()
+            print("=================================")
+            print("Game Over!")
+            print("Score achieved: " + str(self.pg.game.get_score()))
+            print("Lines cleared: " + str(self.pg.game.board.get_lines_cleared()))
+            print("=================================")
+            self.pg.wait_for_input()
+            self.pg.new_game()
