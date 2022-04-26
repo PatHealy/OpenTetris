@@ -28,6 +28,23 @@ python app.py terminal
 This requires the package sty. Given how it uses colored text, I can only confirm it to run on Linux terminals 
 (tested on Ubuntu terminal for Windows).
 
+# AI Stuff
+
+## Train Single Player Agent
+```bash
+python app.py trainP1
+```
+
+## Test Single Player Agent
+```bash
+python app.py testP1
+```
+
+## Play multiplayer against the single player agent
+```bash
+python app.py vsAI
+```
+
 ## Run on an LED board
 
 This isn't finished yet!

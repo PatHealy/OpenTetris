@@ -61,7 +61,7 @@ class SingleTrainer:
         # display the characteristics of the winner genome
         print('\n\nBest genome: {!s}'.format(winner))
         # create a file for winner model
-        with open("winner.pickle", 'wb') as model_file:
+        with open("./single_player/winner.pickle", 'wb') as model_file:
             # save the model
             pickle.dump(winner, model_file)
 

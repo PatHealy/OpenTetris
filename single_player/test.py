@@ -13,7 +13,7 @@ class SingleTester:
         self.pg = PygameTetrisRunner(width, height)
 
         # open the winner genome file
-        with open("winner.pickle", 'rb') as genome_file:
+        with open("./single_player/winner.pickle", 'rb') as genome_file:
             # load the winner genome to the genome variable
             genome = pickle.load(genome_file)
 

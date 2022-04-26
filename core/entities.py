@@ -289,7 +289,7 @@ class Tetris:
 
 	def add_opponent_lines(self, nlines):
 		for i in range(nlines):
-			row = [(70, 70, 70) for x in self.width]
+			row = [(70, 70, 70) for x in range(self.width)]
 			row[random.randint(0, self.width-1)] = (0,0,0)
 			self.board.data = [row] + self.board.data[:-1]
 
