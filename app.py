@@ -1,5 +1,6 @@
 from runners import PygameTetrisRunner, MultiplayerRunner, TerminalTetrisRunner, VsAIRunner
 from single_player import SingleTrainer, SingleTester
+from multiplayer import MultiplayerTrainer
 import sys
 
 if __name__ == '__main__':
@@ -21,3 +22,6 @@ if __name__ == '__main__':
 	elif sys.argv[1] == "vsAI":
 		runner = VsAIRunner()
 		runner.play()
+	elif sys.argv[1] == "train2P":
+		trainer = MultiplayerTrainer()
+		trainer.train()

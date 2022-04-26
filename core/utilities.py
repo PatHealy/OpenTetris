@@ -176,61 +176,14 @@ class ModelParams:
         print("Random Weight: " + str(self.random_weight))
 
     def return_all_params(self):
-
-        """
-        Note:   here, all the un-desirable attributes are put with '-' signs as a
-                fix, because after few trail runs, I observed that most generations
-                were being initialized with positive weights, thus in-order save
-                few generation cycles I negated these attributes by default.
-        """
-
         return (-self.aggregate_height, -self.hole_count, -self.bumpiness,
                 -self.num_pits, -self.max_well, -self.num_col_with_holes,
                 -self.row_transitions, -self.col_transitions, self.score)
 
-
-# def get_numpy_shape(piece):
-#     """
-#     Returns a numpy matrix representing orientaions of a single
-#     shape using 0s and 1s, where 0 represents grid cell unoccupied
-#     and 1 represents grid cell occupied.
-#
-#     Eg -
-#
-#       *                     0 1
-#     * *     is encoded as   1 1
-#       *                     0 1
-#
-#       *                     0 1 0
-#     * * *   is encoded as   1 1 1
-#
-#     *                       1 0
-#     * *     is encoded as   1 1
-#     *                       1 0
-#
-#     * * *   is encoded as   1 1 1
-#       *                     0 1 0
-#     """
-#
-#     shape = piece.shape
-#     formatted_shape = [coord for coord in piece.types[shape]]
-#     formatted_shape = formatted_shape + [(0,0)]
-#
-#     # list of x coordinates
-#     x_coords = [x for x, _ in formatted_shape]
-#     # list of y coordinates
-#     y_coords = [y for _, y in formatted_shape]
-#     # shape of matrix
-#     rows = (max(y_coords) - min(y_coords) + 1)
-#     cols = (max(x_coords) - min(x_coords) + 1)
-#     # initialize matrix as zeros
-#     template = np.zeros(shape=(rows, cols), dtype=int)
-#     # iterate through all coordinates
-#     for x, y in formatted_shape:
-#         # mark those coordinates as 1
-#         template[rows - 1 - (y - min(y_coords))][x - min(x_coords)] = 1
-#     # return the numpy array
-#     return template
+    def return_opponent_params(self):
+        return (self.aggregate_height, self.hole_count, self.bumpiness,
+                self.num_pits, self.max_well, self.num_col_with_holes,
+                self.row_transitions, self.col_transitions, -self.score)
 
 def get_piece_rotations(piece_temp):
     rotation_groups = [
@@ -257,11 +210,15 @@ def get_piece_rotations(piece_temp):
     # return the list
     return possible_shapes
 
-def generate_piece_possibilities(tetris, model, piece_rotations):
+def generate_piece_possibilities(tetris, model, piece_rotations, opponent=None):
     width = tetris.width
     height = tetris.height
     possible_moves_result = []
     initial_board = tetris.board
+
+    if not initial_board.data[-1][0] == (0,0,0):
+        print("Failed!")
+        return None
 
     for piece in piece_rotations:
         # print("Checking piece: " + piece.shape)
@@ -276,7 +233,13 @@ def generate_piece_possibilities(tetris, model, piece_rotations):
                 tmp_tetris.snap_piece()
                 params = ModelParams(generate=True, board=tmp_tetris.board)
                 # calculate fitness for the respective next_piece orientation
-                fitness = model.activate(params.return_all_params())[0]
+                if opponent == None:
+                    fitness = model.activate(params.return_all_params())[0]
+                else:
+                    opponent_params = ModelParams(generate=True, board=opponent).return_opponent_params()
+                    training_params = params.return_all_params()
+                    combined_params = training_params + opponent_params
+                    fitness = model.activate(combined_params)[0]
 
                 if x_start is not None:
                     # append rotation, column number, fitness and next_piece_fitness rounded to 5 decimals
@@ -284,12 +247,13 @@ def generate_piece_possibilities(tetris, model, piece_rotations):
     return possible_moves_result
 
 
-def try_possible_moves(tetris, model):
+def try_possible_moves(tetris, model, opponent=None):
     """
     Driver method for generate_piece_possibilities.
     It generates the respective numpy arrays for further
     computations in generate_piece_possibilities.
     """
+
     current_piece_temp = get_piece_rotations(tetris.piece)
 
     """
@@ -297,7 +261,7 @@ def try_possible_moves(tetris, model):
     then based on the least number of shifts required, then based on the least
     number of rotations required, in a descending order
     """
-    possible_moves_result = sorted(generate_piece_possibilities(tetris, model, current_piece_temp),
+    possible_moves_result = sorted(generate_piece_possibilities(tetris, model, current_piece_temp, opponent=opponent),
                                    key=lambda p: (p[2],
                                                   - abs(p[1] - tetris.piece.center[0])),
                                    reverse=True)

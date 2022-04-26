@@ -200,6 +200,9 @@ class Tetris:
 		self.board = Board(width, height)
 		self.piece = Piece(width, height, -1)
 		self.debug_mode = debug_mode
+		#goal coordinates used by AI
+		self.goalX = None
+		self.goalRotation = None
 
 	def is_overlap(self):
 		board_data = self.board.get_data()
@@ -222,7 +225,7 @@ class Tetris:
 			return True
 		return False
 
-	def move_piece(self, direction):
+	def move_piece(self, direction, snapping=False):
 		if self.is_failed():
 			if self.debug_mode:
 				print("Failed move")
@@ -234,6 +237,8 @@ class Tetris:
 		if self.is_overlap():
 			while self.is_overlap():
 				self.piece.move(opposites[direction])
+			if direction == 'down' and not snapping:
+				self.snap_piece()
 			return False
 		return True
 
@@ -257,19 +262,16 @@ class Tetris:
 			return False
 		self.board.remove_cleared_lines()
 
-		while self.move_piece('down'):
+		while self.move_piece('down', snapping=True):
 			pass
 
-		self.board.add_piece(self.piece, debug=self.debug_mode)
+		success = self.board.add_piece(self.piece, debug=self.debug_mode)
 		self.piece = Piece(self.width, self.height, self.piece.shape_index)
-
-		if self.is_failed() and self.debug_mode:
-			print("Failed in add")
 
 		if self.debug_mode:
 			params = ModelParams(generate=True, board=self.board)
 			params.print_summary()
-		return True
+		return success
 
 	def is_failed(self):
 		return self.board.is_failed()

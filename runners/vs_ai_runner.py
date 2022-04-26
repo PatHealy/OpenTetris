@@ -19,8 +19,6 @@ class VsAIRunner:
 		self.clock = pygame.time.Clock()
 		self.screen = pygame.display.set_mode([(2 * width + 1) * 50, (height + 3) * 50])
 		self.tick = 0
-		self.goalRotation = None
-		self.goalX = None
 		self.ai_tick = 0
 
 		# open the winner genome file
@@ -43,8 +41,6 @@ class VsAIRunner:
 		self.humanPlayer = Tetris(self.width, self.height, debug_mode=self.debug_mode)
 		self.aiPlayer = Tetris(self.width, self.height, debug_mode=self.debug_mode)
 		self.tick = 0
-		self.goalRotation = None
-		self.goalX = None
 		self.ai_tick = 0
 		self.erase_board()
 
@@ -58,7 +54,7 @@ class VsAIRunner:
 			if i > 1:
 				pygame.draw.rect(self.screen, (100,100,100), pygame.Rect(xOffset, i * 50 + 48, self.width*50, 4))
 
-	def display_board(self):
+	def display_board(self, p1Name="Human"):
 		p1_data = self.humanPlayer.get_board()
 		p2_data = self.aiPlayer.get_board()
 
@@ -78,20 +74,20 @@ class VsAIRunner:
 
 		pygame.display.flip()
 
-		pygame.display.set_caption("Open Tetris | Human Score: " + str(self.humanPlayer.get_score()) + ", "
-		                           + str(self.humanPlayer.board.get_lines_cleared()) + " lines cleared | AI Score: "
+		pygame.display.set_caption("Open Tetris | " + p1Name + " Score: " + str(self.humanPlayer.get_score()) + ", "
+		                           + str(self.humanPlayer.board.get_lines_cleared()) + " lines cleared | SP AI Score: "
 		                           + str(self.aiPlayer.get_score()) + ", "
 		                           + str(self.aiPlayer.board.get_lines_cleared())
 		                           + " lines cleared")
 
-	def display_winner(self):
-		announcement = "Human Wins!"
+	def display_winner(self, p1Name="Human"):
+		announcement = p1Name + " Wins!"
 		if self.aiPlayer.get_score() > self.humanPlayer.get_score():
 			announcement = "AI Wins!"
 		print(announcement)
 		pygame.display.set_caption(announcement
-									+ " | Open Tetris | Human Score: " + str(self.humanPlayer.get_score()) + ", "
-		                           + str(self.humanPlayer.board.get_lines_cleared()) + " lines cleared | AI Score: "
+									+ " | Open Tetris | " + p1Name + " Score: " + str(self.humanPlayer.get_score()) + ", "
+		                           + str(self.humanPlayer.board.get_lines_cleared()) + " lines cleared | SP AI Score: "
 		                           + str(self.aiPlayer.get_score()) + ", "
 		                           + str(self.aiPlayer.board.get_lines_cleared())
 		                           + " lines cleared")
@@ -115,24 +111,29 @@ class VsAIRunner:
 		# if list is not empty
 		if possible_moves_result:
 			# best moves correspond to 0th position because of descending sort
-			self.goalRotation, self.goalX, _ = possible_moves_result[0]
+			self.aiPlayer.goalRotation, self.aiPlayer.goalX, _ = possible_moves_result[0]
 			return True
 		return False
 
 	def ai_move(self):
-		if self.goalRotation == None:
-			self.ai_choose_move()
-		if self.aiPlayer.piece.shape != self.goalRotation.shape:
-			self.aiPlayer.rotate_piece()
-		elif self.goalX != self.aiPlayer.piece.center[0]:
-			if self.goalX > self.aiPlayer.piece.center[0]:
-				self.aiPlayer.move_piece("right")
+		if not self.aiPlayer.is_failed():
+			if self.aiPlayer.goalRotation is None:
+				self.ai_choose_move()
+			if self.aiPlayer.piece.shape != self.aiPlayer.goalRotation.shape:
+				success = self.aiPlayer.rotate_piece()
+				if not success:
+					self.ai_choose_move()
+			elif self.aiPlayer.goalX != self.aiPlayer.piece.center[0]:
+				if self.aiPlayer.goalX > self.aiPlayer.piece.center[0]:
+					success = self.aiPlayer.move_piece("right")
+				else:
+					success = self.aiPlayer.move_piece("left")
+				if not success:
+					self.ai_choose_move()
 			else:
-				self.aiPlayer.move_piece("left")
-		else:
-			self.aiPlayer.snap_piece()
-			self.goalRotation = None
-			self.goalX = None
+				self.aiPlayer.snap_piece()
+				self.aiPlayer.goalRotation = None
+				self.aiPlayer.goalX = None
 
 	def get_input(self):
 		humanMove = False
