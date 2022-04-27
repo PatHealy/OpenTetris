@@ -51,7 +51,7 @@ python app.py test2P [cell-size]
 ```
 Tests the multiplayer-trained agent against the single player agent.
 
-![A gif demonstrating the multiplayer agent in action. Multiplayer on the left, single-player on the right.](/single_player/demonstration.gif)
+![A gif demonstrating the multiplayer agent in action. Multiplayer on the left, single-player on the right.](/multiplayer/demonstration.gif)
 
 
 ## Play multiplayer against the multiplayer agent
