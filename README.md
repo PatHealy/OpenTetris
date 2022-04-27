@@ -7,18 +7,59 @@ Code to run a Tetris game on various displays.
 - x to close the game
 - In the multiplayer mode, Arrows to move, RControl to rotate
 
-## Run in a PyGame GUI
-To run the GUI, run app.py with no parameters:
+## Play a Single Player Game
+To run with a pygame GUI, run app.py with one parameter "play":
 ```bash
-python app.py
+python app.py play [cell-size]
 ```
-This requires you have pygame installed.
+This requires you have pygame installed. For any of these commands you can include an additional int parameter "cell-size", which is the width of each Tetris tile in pixels. The default value is 50.
 
 ## Run Multiplayer Game 
 ```bash
-python app.py multiplayer
+python app.py multiplayer [cell-size]
 ```
 This requires you have pygame installed.
+
+# AI Stuff
+
+## Train Single Player Agent
+```bash
+python app.py trainP1 [cell-size]
+```
+This agent is trained using a genetic algorithm using the parameters defined in /core/utilities.py
+
+## Test Single Player Agent
+```bash
+python app.py testP1 [cell-size]
+```
+![A gif demonstrating the single player agent in action](/single_player/demonstration.gif)
+
+## Play multiplayer against the single player agent
+```bash
+python app.py vsAI [cell-size]
+```
+
+## Train the multiplayer agent
+```bash
+python app.py train2P [cell-size]
+```
+This agent is trained using a genetic algorithm using the parameters defined in /core/utilities.py, playing against the single player agent.
+
+## Test the multiplayer agent
+```bash
+python app.py test2P [cell-size]
+```
+Tests the multiplayer-trained agent against the single player agent.
+
+![A gif demonstrating the multiplayer agent in action. Multiplayer on the left, single-player on the right.](/single_player/demonstration.gif)
+
+
+## Play multiplayer against the multiplayer agent
+```bash
+python app.py vsMPAI [cell-size]
+```
+
+# Alternative Displays
 
 ## Run in Terminal
 To run in terminal, run app.py with parameter "terminal":
@@ -28,25 +69,7 @@ python app.py terminal
 This requires the package sty. Given how it uses colored text, I can only confirm it to run on Linux terminals 
 (tested on Ubuntu terminal for Windows).
 
-# AI Stuff
+## LED Panel
 
-## Train Single Player Agent
-```bash
-python app.py trainP1
-```
-
-## Test Single Player Agent
-```bash
-python app.py testP1
-```
-
-## Play multiplayer against the single player agent
-```bash
-python app.py vsAI
-```
-
-## Run on an LED board
-
-This isn't finished yet!
-
+An LED panel display driver is currently in development.
 

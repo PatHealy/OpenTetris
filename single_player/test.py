@@ -7,10 +7,10 @@ from core.entities import Tetris
 from runners.pygame_runner import PygameTetrisRunner
 
 class SingleTester:
-    def __init__(self, width=10, height=20):
+    def __init__(self, width=10, height=20, cell_size=50):
         self.width = width
         self.height = height
-        self.pg = PygameTetrisRunner(width, height)
+        self.pg = PygameTetrisRunner(width, height, cell_size=cell_size)
 
         # open the winner genome file
         with open("./single_player/winner.pickle", 'rb') as genome_file:

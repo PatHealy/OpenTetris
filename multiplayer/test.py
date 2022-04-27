@@ -7,10 +7,10 @@ from core.entities import Tetris
 from runners.vs_ai_runner import VsAIRunner
 
 class MultiplayerTester:
-	def __init__(self, width=10, height=20):
+	def __init__(self, width=10, height=20, cell_size=50):
 		self.width = width
 		self.height = height
-		self.pg = VsAIRunner(width, height)
+		self.pg = VsAIRunner(width, height, cell_size=cell_size)
 		self.t_lines_cleared = 0
 		self.o_lines_cleared = 0
 

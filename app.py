@@ -4,30 +4,37 @@ from multiplayer import MultiplayerTrainer, MultiplayerTester
 import sys
 
 if __name__ == '__main__':
+	cell_size = 50
+	if len(sys.argv) > 2:
+		cell_size = int(sys.argv[2])
+
 	if len(sys.argv) < 2:
 		runner = PygameTetrisRunner()
 		runner.play()
+	elif sys.argv[1] == "play":
+		runner = PygameTetrisRunner(cell_size=cell_size)
+		runner.play()
 	elif sys.argv[1] == "multiplayer":
-		runner = MultiplayerRunner()
+		runner = MultiplayerRunner(cell_size=cell_size)
 		runner.play()
 	elif sys.argv[1] == "terminal":
 		runner = TerminalTetrisRunner()
 		runner.play()
 	elif sys.argv[1] == "trainP1":
-		trainer = SingleTrainer()
+		trainer = SingleTrainer(cell_size=cell_size)
 		trainer.train()
 	elif sys.argv[1] == "testP1":
-		tester = SingleTester()
+		tester = SingleTester(cell_size=cell_size)
 		tester.play()
 	elif sys.argv[1] == "vsAI":
-		runner = VsAIRunner()
+		runner = VsAIRunner(cell_size=cell_size)
 		runner.play()
 	elif sys.argv[1] == "vsMPAI":
-		runner = VsMPAIRunner()
+		runner = VsMPAIRunner(cell_size=cell_size)
 		runner.play()
 	elif sys.argv[1] == "train2P":
-		trainer = MultiplayerTrainer()
+		trainer = MultiplayerTrainer(cell_size=cell_size)
 		trainer.train()
 	elif sys.argv[1] == "test2P":
-		tester = MultiplayerTester()
+		tester = MultiplayerTester(cell_size=cell_size)
 		tester.test()

@@ -2,12 +2,13 @@ import pygame
 from core.game import TetrisRunner
 
 class PygameTetrisRunner(TetrisRunner):
-	def __init__(self, width=10, height=20, debug_mode=False):
+	def __init__(self, width=10, height=20, debug_mode=False, cell_size=50):
 		super().__init__(width, height, debug_mode=debug_mode)
 		pygame.init()
 		pygame.display.set_caption('Open Tetris')
 		self.clock = pygame.time.Clock()
-		self.screen = pygame.display.set_mode([width * 50, (height+3) * 50])
+		self.screen = pygame.display.set_mode([width * cell_size, (height+3) * cell_size])
+		self.cell_size=cell_size
 		self.tick = 0
 
 	def erase_board(self):
@@ -15,10 +16,10 @@ class PygameTetrisRunner(TetrisRunner):
 
 	def draw_grid(self):
 		for i in range(self.width-1):
-			pygame.draw.rect(self.screen, (100,100,100), pygame.Rect(i * 50 + 48, 3*50, 4, (self.height+3)*50))
+			pygame.draw.rect(self.screen, (100,100,100), pygame.Rect(i * self.cell_size + self.cell_size - 2, 3*self.cell_size, 4, (self.height+3)*self.cell_size))
 		for i in range(self.height+2):
 			if i > 1:
-				pygame.draw.rect(self.screen, (100,100,100), pygame.Rect(0, i * 50 + 48, self.width*50, 4))
+				pygame.draw.rect(self.screen, (100,100,100), pygame.Rect(0, i * self.cell_size + self.cell_size - 2, self.width*self.cell_size, 4))
 
 	def display_board(self):
 		pygame.display.set_caption('Open Tetris | Score: ' + str(self.game.get_score()) + " | Lines cleared: " + str(self.game.board.get_lines_cleared()))
@@ -27,7 +28,7 @@ class PygameTetrisRunner(TetrisRunner):
 		for y in range(len(data)):
 			for x in range(len(data[y])):
 				cell = data[y][x]
-				pygame.draw.rect(self.screen, cell, pygame.Rect(x*50, (self.height-y+2)*50, 50, 50))
+				pygame.draw.rect(self.screen, cell, pygame.Rect(x*self.cell_size, (self.height-y+2)*self.cell_size, self.cell_size, self.cell_size))
 
 		self.draw_grid()
 

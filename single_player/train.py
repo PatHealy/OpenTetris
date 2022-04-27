@@ -7,10 +7,10 @@ from core.entities import Tetris
 from runners.pygame_runner import PygameTetrisRunner
 
 class SingleTrainer:
-    def __init__(self, width=10, height=20):
+    def __init__(self, width=10, height=20, cell_size=50):
         self.width = width
         self.height = height
-        self.pg = PygameTetrisRunner(width, height)
+        self.pg = PygameTetrisRunner(width, height, cell_size=cell_size)
 
     def train(self):
         # to keep track on generations

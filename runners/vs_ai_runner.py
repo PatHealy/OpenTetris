@@ -8,16 +8,17 @@ import neat
 from core.utilities import try_possible_moves
 
 class VsAIRunner:
-	def __init__(self, width=10, height=20, debug_mode=False):
+	def __init__(self, width=10, height=20, debug_mode=False, cell_size=50):
 		self.width = width
 		self.height = height
+		self.cell_size = cell_size
 		self.debug_mode = debug_mode
 		self.humanPlayer = Tetris(self.width, self.height, debug_mode=debug_mode)
 		self.aiPlayer = Tetris(self.width, self.height, debug_mode=debug_mode)
 		pygame.init()
 		pygame.display.set_caption('Open Tetris')
 		self.clock = pygame.time.Clock()
-		self.screen = pygame.display.set_mode([(2 * width + 1) * 50, (height + 3) * 50])
+		self.screen = pygame.display.set_mode([(2 * width + 1) * self.cell_size, (height + 3) * self.cell_size])
 		self.tick = 0
 		self.ai_tick = 0
 
@@ -49,10 +50,10 @@ class VsAIRunner:
 
 	def draw_grid(self, xOffset):
 		for i in range(self.width-1):
-			pygame.draw.rect(self.screen, (100,100,100), pygame.Rect(i * 50 + 48 + xOffset, 3*50, 4, (self.height+3)*50))
+			pygame.draw.rect(self.screen, (100,100,100), pygame.Rect(i * self.cell_size + self.cell_size - 2 + xOffset, 3*self.cell_size, 4, (self.height+3)*self.cell_size))
 		for i in range(self.height+2):
 			if i > 1:
-				pygame.draw.rect(self.screen, (100,100,100), pygame.Rect(xOffset, i * 50 + 48, self.width*50, 4))
+				pygame.draw.rect(self.screen, (100,100,100), pygame.Rect(xOffset, i * self.cell_size + self.cell_size - 2, self.width*self.cell_size, 4))
 
 	def display_board(self, p1Name="Human"):
 		p1_data = self.humanPlayer.get_board()
@@ -61,16 +62,16 @@ class VsAIRunner:
 		for y in range(len(p1_data)):
 			for x in range(len(p1_data[y])):
 				cell = p1_data[y][x]
-				pygame.draw.rect(self.screen, cell, pygame.Rect(x * 50, (self.height - y + 2) * 50, 50, 50))
+				pygame.draw.rect(self.screen, cell, pygame.Rect(x * self.cell_size, (self.height - y + 2) * self.cell_size, self.cell_size, self.cell_size))
 
 		for y in range(len(p2_data)):
 			for x in range(len(p2_data[y])):
 				cell = p2_data[y][x]
-				pygame.draw.rect(self.screen, cell, pygame.Rect(x * 50 + self.width * 50 + 50, (self.height - y + 2) * 50, 50, 50))
+				pygame.draw.rect(self.screen, cell, pygame.Rect(x * self.cell_size + self.width * self.cell_size + self.cell_size, (self.height - y + 2) * self.cell_size, self.cell_size, self.cell_size))
 
-		pygame.draw.rect(self.screen, (150, 150, 150), pygame.Rect(self.width * 50, 0, 50, 50 * (self.height+3)))
+		pygame.draw.rect(self.screen, (150, 150, 150), pygame.Rect(self.width * self.cell_size, 0, self.cell_size, self.cell_size * (self.height+3)))
 		self.draw_grid(0)
-		self.draw_grid(self.width * 50 + 50)
+		self.draw_grid(self.width * self.cell_size + self.cell_size)
 
 		pygame.display.flip()
 

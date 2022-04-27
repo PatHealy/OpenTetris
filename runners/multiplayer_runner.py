@@ -2,20 +2,23 @@ import pygame
 from core.entities import Tetris
 
 class MultiplayerRunner:
-	def __init__(self, width=10, height=20, debug_mode=False):
+	def __init__(self, width=10, height=20, debug_mode=False, cell_size=50):
 		self.width = width
 		self.height = height
 		self.debug_mode = debug_mode
+		self.cell_size=cell_size
 		self.player1 = Tetris(self.width, self.height, debug_mode=debug_mode)
 		self.player2 = Tetris(self.width, self.height, debug_mode=debug_mode)
 		pygame.init()
 		pygame.display.set_caption('Open Tetris')
 		self.clock = pygame.time.Clock()
-		self.screen = pygame.display.set_mode([(2 * width + 1) * 50, (height + 3) * 50])
+		self.screen = pygame.display.set_mode([(2 * width + 1) * self.cell_size, (height + 3) * self.cell_size])
 		self.p1tick = 0
 		self.p2tick = 0
 
 	def new_game(self):
+		self.clock.tick_busy_loop(120)
+		pygame.display.set_caption('Open Tetris')
 		self.player1 = Tetris(self.width, self.height, debug_mode=self.debug_mode)
 		self.player2 = Tetris(self.width, self.height, debug_mode=self.debug_mode)
 		self.erase_board()
@@ -25,9 +28,9 @@ class MultiplayerRunner:
 
 	def draw_grid(self, xOffset):
 		for i in range(self.width-1):
-			pygame.draw.rect(self.screen, (100,100,100), pygame.Rect(i * 50 + 48 + xOffset, 0, 4, (self.height+3)*50))
+			pygame.draw.rect(self.screen, (100,100,100), pygame.Rect(i * self.cell_size + self.cell_size - 2 + xOffset, 0, 4, (self.height+3)*self.cell_size))
 		for i in range(self.height+2):
-			pygame.draw.rect(self.screen, (100,100,100), pygame.Rect(xOffset, i * 50 + 48, self.width*50, 4))
+			pygame.draw.rect(self.screen, (100,100,100), pygame.Rect(xOffset, i * self.cell_size + self.cell_size - 2, self.width*self.cell_size, 4))
 
 	def display_board(self):
 		p1_data = self.player1.get_board()
@@ -36,16 +39,16 @@ class MultiplayerRunner:
 		for y in range(len(p1_data)):
 			for x in range(len(p1_data[y])):
 				cell = p1_data[y][x]
-				pygame.draw.rect(self.screen, cell, pygame.Rect(x * 50, (self.height - y + 2) * 50, 50, 50))
+				pygame.draw.rect(self.screen, cell, pygame.Rect(x * self.cell_size, (self.height - y + 2) * self.cell_size, self.cell_size, self.cell_size))
 
 		for y in range(len(p2_data)):
 			for x in range(len(p2_data[y])):
 				cell = p2_data[y][x]
-				pygame.draw.rect(self.screen, cell, pygame.Rect(x * 50 + self.width * 50 + 50, (self.height - y + 2) * 50, 50, 50))
+				pygame.draw.rect(self.screen, cell, pygame.Rect(x * self.cell_size + self.width * self.cell_size + self.cell_size, (self.height - y + 2) * self.cell_size, self.cell_size, self.cell_size))
 
-		pygame.draw.rect(self.screen, (150, 150, 150), pygame.Rect(self.width * 50, 0, 50, 50 * (self.height+3)))
+		pygame.draw.rect(self.screen, (150, 150, 150), pygame.Rect(self.width * self.cell_size, 0, self.cell_size, self.cell_size * (self.height+3)))
 		self.draw_grid(0)
-		self.draw_grid(self.width * 50 + 50)
+		self.draw_grid(self.width * self.cell_size + self.cell_size)
 
 		pygame.display.flip()
 
@@ -54,10 +57,7 @@ class MultiplayerRunner:
 		if self.player1.is_failed():
 			announcement = "Player 2 Wins!"
 		print(announcement)
-		font = pygame.font.Font(None, 25)
-		text = font.render(announcement, True, (255, 255, 255))
-		text_rect = text.get_rect(center=(((2 * self.width + 1) * 50) / 2, ((self.height + 3) * 50) / 2))
-		self.screen.blit(text, text_rect)
+		pygame.display.set_caption(announcement)
 
 	def get_input(self):
 		p1success = False
