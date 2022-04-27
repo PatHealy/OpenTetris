@@ -217,8 +217,8 @@ def generate_piece_possibilities(tetris, model, piece_rotations, opponent=None):
     initial_board = tetris.board
 
     if not initial_board.data[-1][0] == (0,0,0):
-        print("Failed!")
-        return None
+        #print("Failed!")
+        return []
 
     for piece in piece_rotations:
         # print("Checking piece: " + piece.shape)

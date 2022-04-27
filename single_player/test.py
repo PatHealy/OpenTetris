@@ -7,13 +7,14 @@ from core.entities import Tetris
 from runners.pygame_runner import PygameTetrisRunner
 
 class SingleTester:
-    def __init__(self, width=10, height=20, cell_size=50):
+    def __init__(self, width=10, height=20, cell_size=50, pickle_fn="./single_player/winner.pickle"):
         self.width = width
         self.height = height
         self.pg = PygameTetrisRunner(width, height, cell_size=cell_size)
+        self.human_watchable = True
 
         # open the winner genome file
-        with open("./single_player/winner.pickle", 'rb') as genome_file:
+        with open(pickle_fn, 'rb') as genome_file:
             # load the winner genome to the genome variable
             genome = pickle.load(genome_file)
 
@@ -31,7 +32,8 @@ class SingleTester:
     def display_game(self):
         self.pg.erase_board()
         self.pg.display_board()
-        self.pg.clock.tick_busy_loop(30)
+        if self.human_watchable:
+            self.pg.clock.tick_busy_loop(30)
 
     def play_loop(self):
         while not self.pg.game.is_failed():
@@ -62,8 +64,27 @@ class SingleTester:
                 self.pg.game.snap_piece()
                 self.display_game()
                 #
-        print("Failed")
         self.display_game()
+        return self.pg.game.get_score(), self.pg.game.board.get_lines_cleared()
+
+    def test(self, trials=100):
+        self.human_watchable = False
+        scores = []
+        lcs = []
+        for i in range(trials):
+            print("Playing game " + str(i))
+            score, line_clear = self.play_loop()
+            scores.append(score)
+            lcs.append(line_clear)
+            self.pg.new_game()
+
+        print()
+        print("======== PERFORMANCE SUMMARY ===========")
+        print("Over " + str(trials) + " trials")
+        print("Average score: " + str(sum(scores)/float(trials)))
+        print("Average line clears: " + str(sum(lcs)/float(trials)))
+        print("=================================")
+        self.human_watchable = True
 
     def play(self):
         while True:

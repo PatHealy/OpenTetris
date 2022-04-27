@@ -26,6 +26,9 @@ if __name__ == '__main__':
 	elif sys.argv[1] == "testP1":
 		tester = SingleTester(cell_size=cell_size)
 		tester.play()
+	elif sys.argv[1] == "testP1Stats":
+		tester = SingleTester(cell_size=cell_size)
+		tester.test()
 	elif sys.argv[1] == "vsAI":
 		runner = VsAIRunner(cell_size=cell_size)
 		runner.play()
@@ -38,3 +41,6 @@ if __name__ == '__main__':
 	elif sys.argv[1] == "test2P":
 		tester = MultiplayerTester(cell_size=cell_size)
 		tester.test()
+	elif sys.argv[1] == "test2PStats":
+		tester = MultiplayerTester(cell_size=cell_size)
+		tester.test_stats()
