@@ -13,7 +13,7 @@ class MultiplayerTester:
 		self.pg = VsAIRunner(width, height, cell_size=cell_size)
 		self.t_lines_cleared = 0
 		self.o_lines_cleared = 0
-		self.human_watchable = False
+		self.human_watchable = True
 
 		with open("./multiplayer/winner.pickle", 'rb') as genome_file:
 			# load the winner genome to the genome variable
@@ -34,7 +34,7 @@ class MultiplayerTester:
 		self.pg.erase_board()
 		self.pg.display_board(p1Name="MP AI")
 		if self.human_watchable:
-			self.pg.clock.tick(40)
+			self.pg.clock.tick(30)
 
 	def test(self):
 		while True:

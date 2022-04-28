@@ -1,0 +1,4 @@
+numpy>=1.22.3
+pygame>=2.1.2
+sty>=1.0.4
+neat-python>=0.92
