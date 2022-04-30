@@ -1,6 +1,7 @@
 from runners import PygameTetrisRunner, MultiplayerRunner, TerminalTetrisRunner, VsAIRunner, VsMPAIRunner
 from single_player import SingleTrainer, SingleTester
 from multiplayer import MultiplayerTrainer, MultiplayerTester
+from led_board import LEDTrainer, LEDTester
 import sys
 
 if __name__ == '__main__':
@@ -44,3 +45,9 @@ if __name__ == '__main__':
 	elif sys.argv[1] == "test2PStats":
 		tester = MultiplayerTester(cell_size=cell_size)
 		tester.test_stats()
+	elif sys.argv[1] == "trainLEDboard":
+		trainer = LEDTrainer(width=16, height=16)
+		trainer.train()
+	elif sys.argv[1] == "testLEDboard":
+		tester = LEDTester(width=16, height=16)
+		tester.play()

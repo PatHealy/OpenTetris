@@ -204,7 +204,7 @@ def get_piece_rotations(piece_temp):
     # iterate through each rotation for the piece
     for rotation in possible_shapes_nm:
         # generate the numpy shape for each rotation and append it to the list
-        p = Piece(10, 20, -1)
+        p = Piece(piece_temp.width, piece_temp.height, -1)
         p.shape = rotation
         possible_shapes.append(p)
     # return the list
