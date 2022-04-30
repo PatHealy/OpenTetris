@@ -50,9 +50,7 @@ class LEDTester:
         self.erase_board()
 
     def erase_board(self):
-        self.offset_canvas.clear()
-        self.offset_canvas = self.matrix.SwapOnVSync(self.offset_canvas)
-        self.offset_canvas.clear()
+        self.matrix.clear()
 
     def display_game(self):
         data = self.game.get_board()
@@ -91,7 +89,8 @@ class LEDTester:
                         self.game.move_piece("left")
                     self.display_game()
 
-                self.game.snap_piece()
+                while self.game.move_piece("down"):
+                    self.display_game()
                 self.display_game()
 
         self.display_game()
