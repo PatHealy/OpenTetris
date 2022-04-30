@@ -50,7 +50,7 @@ class LEDTester:
         self.erase_board()
 
     def erase_board(self):
-        self.matrix.clear()
+        self.matrix.Clear()
 
     def display_game(self):
         data = self.game.get_board()
@@ -102,3 +102,7 @@ class LEDTester:
             self.display_game()
             time.sleep(10)
             self.new_game()
+
+if __name__ == "__main__":
+    tester = LEDTester(width=16, height=16)
+    tester.play()
