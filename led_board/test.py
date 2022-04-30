@@ -51,7 +51,7 @@ class LEDTester:
 
     def erase_board(self):
         self.offset_canvas.clear()
-        # self.offset_canvas = self.matrix.SwapOnVSync(self.offset_canvas)
+        self.offset_canvas = self.matrix.SwapOnVSync(self.offset_canvas)
         self.offset_canvas.clear()
 
     def display_game(self):
@@ -61,7 +61,7 @@ class LEDTester:
                 if data[int(y / 4)][int(x / 4)] != self.prior_data[int(y / 4)][int(x / 4)]:
                     c = data[int(y / 4)][int(x / 4)]
                     self.offset_canvas.SetPixel(x, y, c[0], c[1], c[2])
-            # self.offset_canvas = self.matrix.SwapOnVSync(self.offset_canvas)
+        self.offset_canvas = self.matrix.SwapOnVSync(self.offset_canvas)
         self.prior_data = data
 
     def play_loop(self):
