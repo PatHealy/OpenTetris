@@ -60,8 +60,9 @@ class LEDTester:
             for y in range(self.matrix.height):
                 if data[int(y / 4)][int(x / 4)] != self.prior_data[int(y / 4)][int(x / 4)]:
                     c = data[int(y / 4)][int(x / 4)]
-                    self.offset_canvas.SetPixel(x, y, c[0], c[1], c[2])
-        self.offset_canvas = self.matrix.SwapOnVSync(self.offset_canvas)
+                    # self.offset_canvas.SetPixel(x, y, c[0], c[1], c[2])
+                    self.matrix.SetPixel(x, y, c[0], c[1], c[2])
+        # self.offset_canvas = self.matrix.SwapOnVSync(self.offset_canvas)
         self.prior_data = data
 
     def play_loop(self):
