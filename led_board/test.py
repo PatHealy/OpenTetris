@@ -5,7 +5,7 @@ import neat
 from core.utilities import try_possible_moves
 from core.entities import Tetris
 
-from matrix_examples.python.rgbmatrix import RGBMatrix, RGBMatrixOptions
+from rgbmatrix import RGBMatrix, RGBMatrixOptions
 
 import time
 
@@ -16,7 +16,6 @@ class LEDTester:
 
         self.game = Tetris(self.width, self.height, debug_mode=False)
         self.prior_data = self.game.get_board()
-
 
         matrix_options = RGBMatrixOptions()
         matrix_options.rows = 64

@@ -4,7 +4,4 @@ from __future__ import absolute_import
 __version__ = "0.0.1"
 __author__ = "Christoph Friedrich <christoph.friedrich@vonaffenfels.de>"
 
-import pyximport
-pyximport.install()
-
 from .core import RGBMatrix, FrameCanvas, RGBMatrixOptions

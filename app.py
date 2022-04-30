@@ -19,7 +19,7 @@ if __name__ == '__main__':
 		runner = MultiplayerRunner(cell_size=cell_size)
 		runner.play()
 	elif sys.argv[1] == "terminal":
-		from runners import TerminalTetrisRunner
+		# from runners import TerminalTetrisRunner
 		runner = TerminalTetrisRunner()
 		runner.play()
 	elif sys.argv[1] == "trainP1":
